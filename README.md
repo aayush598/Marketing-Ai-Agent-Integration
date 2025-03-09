@@ -61,18 +61,13 @@ By default, the server will run at `http://127.0.0.1:5000/`.
 
   ```json
   {
-    "prompt": {
-      "product_name": "AI Productivity Assistant",
-      "product_features": [
-        "Automated Task Management",
-        "Smart Reminders",
-        "AI-Powered Insights",
-        "Seamless Integration with Apps"
-      ],
-      "description": "An AI-driven assistant that helps professionals boost their productivity by automating tasks, setting reminders, and providing intelligent insights.",
-      "audience": "Remote workers, entrepreneurs, and corporate professionals",
-      "platform": "Web, iOS, Android"
-    },
+    "prompt": [
+      "product_name",
+      "product_features",
+      "description",
+      "audience",
+      "platform"
+    ],
     "actions": ["campaign_idea", "ad_copy", "generated_images"]
   }
   ```
