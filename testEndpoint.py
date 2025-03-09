@@ -11,9 +11,9 @@ payload = {
         ["Heart Rate Monitoring", "Step Tracking", "Sleep Analysis", "Bluetooth Connectivity"],
         "A next-gen smartwatch designed for fitness enthusiasts, offering advanced health tracking and seamless smartphone integration.",
         "Fitness enthusiasts, athletes, health-conscious individuals",
-        "Web, iOS, Android"
+        "Twitter"
     ],
-    "actions": ["campaign_idea", "ad_copy", "generated_images"]
+    "actions": ["social_media_post"]
 }
 
 # Send the POST request

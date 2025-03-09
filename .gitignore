@@ -1,3 +1,6 @@
 venv
 main_original.py
 .env
+social_media/__pycache__
+config/__pycache__
+agents/__pycache__

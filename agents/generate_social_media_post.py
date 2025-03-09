@@ -8,6 +8,7 @@ def generate_social_media_post(self, product_name, product_features, description
         Platform: {platform}
 
         Keep it short, catchy, and aligned with current social media trends.
+        Follow the format of the platform. Only use text content. Do not use special characters.
         """
         response = self.gemini_text_model.generate_content(prompt)
         return response.text
