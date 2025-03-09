@@ -41,16 +41,3 @@ class EmailSender:
         except Exception as e:
             print(f"❌ Failed to send email: {e}")
             return False
-
-# Test the function if running this script directly
-if __name__ == "__main__":
-    email_client = EmailSender()
-    success = email_client.send_email(
-        recipient_email="raiseracademy.sap@gmail.com",
-        subject="Automated Email",
-        body="Hello, this is an automated email sent using Python."
-    )
-    if success:
-        print("✅ Test Email sent successfully!")
-    else:
-        print("❌ Test Email failed!")

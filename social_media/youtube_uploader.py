@@ -59,15 +59,3 @@ def upload_video(file_path, title, description, tags, category_id="22", privacy_
 
     print("✅ Upload Complete! Video ID:", response["id"])
     return response["id"]
-
-# Test the function if running this script directly
-if __name__ == "__main__":
-    video_id = upload_video(
-        file_path="video.mp4",
-        title="My Python Upload Video",
-        description="This video was uploaded via Python script using YouTube Data API v3.",
-        tags=["python", "youtube api", "automation"],
-        category_id="22",
-        privacy_status="public"
-    )
-    print(f"Video uploaded successfully! ID: {video_id}")
