@@ -4,3 +4,8 @@ main_original.py
 social_media/__pycache__
 config/__pycache__
 agents/__pycache__
+social_media\__pycache__
+config\__pycache__
+agents\__pycache__
+client_secret.json
+token.json
