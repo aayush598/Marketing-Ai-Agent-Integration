@@ -13,6 +13,7 @@ class MarketingAgent:
         self.groq_api_key = groq_api_key
         self.serpapi_key = serpapi_key
         self.gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
+        self.gemini_vision_model = genai.GenerativeModel('gemini-1.5-pro')
 
     def run_campaign(self, prompt, actions=None):
         """

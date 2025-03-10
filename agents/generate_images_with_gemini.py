@@ -21,6 +21,8 @@ def generate_images_with_gemini(self, product_name, product_features, descriptio
 
             response = self.gemini_vision_model.generate_content(prompt)
 
+            print(f"resposne :{response}")
+
             # Check if response contains SVG code
             if "<svg" in response.text and "</svg>" in response.text:
                 # Extract SVG content
