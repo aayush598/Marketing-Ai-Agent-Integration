@@ -13,7 +13,7 @@ payload = {
         "Fitness enthusiasts, athletes, health-conscious individuals",
         "mail"
     ],
-    "actions": ["campaign_idea"]
+    "actions": ["generated_images"]
 }
 
 # Send the POST request
