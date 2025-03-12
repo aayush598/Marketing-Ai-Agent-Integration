@@ -1,38 +1,43 @@
-# Marketing Campaign Generator
+# **Marketing Campaign Generator**
 
-This project provides an AI-powered marketing campaign generator using Flask. It allows users to generate ad copies, blogs, social media posts, video scripts, hashtags, and images based on a given product description.
+This project provides an **AI-powered marketing campaign generator**. It allows users to generate **ad copies, blogs, social media posts, video scripts, hashtags, and images** based on a given product description.  
+The project now runs as a **standalone function** for campaign generation, with a separate **Streamlit-based UI** for user interaction.
 
-## Features
+---
 
-- Generate marketing campaigns automatically
-- Create ad copies, blog posts, and social media posts
-- Generate video scripts and hashtags
-- Scrape or generate images using AI
-- Supports multiple platforms like Web, iOS, and Android
+## **Features**
 
-## Installation
+✅ Generate **marketing campaigns** automatically  
+✅ Create **ad copies, blog posts, and social media posts**  
+✅ Generate **video scripts and hashtags**  
+✅ Scrape or generate **images using AI**  
+✅ Supports **multiple platforms** like Twitter, LinkedIn, Instagram, YouTube, etc.
 
-1. Clone the repository:
+---
+
+## **Installation**
+
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/aayush598/Marketing-Ai-Agent-Integration.git
    cd Marketing-Ai-Agent-Integration
    ```
 
-2. Create and activate a virtual environment:
+2. **Create and activate a virtual environment:**
 
    ```bash
    python3 -m venv venv
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
-3. Install dependencies:
+3. **Install dependencies:**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Set up environment variables:
+4. **Set up environment variables:**  
    Create a `.env` file in the `config` folder and add your API keys:
    ```env
    GROQ_API_KEY=your_groq_api_key
@@ -40,52 +45,49 @@ This project provides an AI-powered marketing campaign generator using Flask. It
    GEMINI_API_KEY=your_gemini_api_key
    ```
 
-## Running the Application
+---
 
-Start the Flask server:
+## **Running the Application**
+
+**Run the main.py file:**
 
 ```bash
 python main.py
 ```
 
-By default, the server will run at `http://127.0.0.1:5000/`.
+---
 
-## API Endpoints
+## **How to Use**
 
-### Generate Marketing Campaign
+- Open the **Streamlit UI** in your browser.
+- Enter details such as:
+  - **Product Name**
+  - **Product Features**
+  - **Campaign Description**
+  - **Target Audience**
+  - **Platform (Twitter, LinkedIn, etc.)**
+  - **Actions** (Select one or more from the available options)
+- Click on **Generate Campaign**.
+- The generated campaign details will be displayed in JSON format.
 
-- **URL:** `/generate_campaign`
-- **Method:** `POST`
-- **Content-Type:** `application/json`
-- **Request Body:**
+---
 
-  ```json
-  {
-    "prompt": [
-      "product_name",
-      "product_features",
-      "description",
-      "audience",
-      "platform"
-    ],
-    "actions": ["campaign_idea", "ad_copy", "generated_images"]
-  }
-  ```
+## **Available Actions**
 
-- **Response Example:**
-  ```json
-  {
-    "campaign_idea": "A marketing campaign focused on 'Work Smarter, Not Harder' featuring real-life case studies of professionals using AI to optimize their daily workflow.",
-    "ad_copy": "🚀 Boost your productivity with AI! Automate tasks, get smart reminders, and optimize your workflow effortlessly. Try AI Productivity Assistant today! #WorkSmarter",
-    "generated_images": [
-      "https://dummyimage.com/600x400/000/fff&text=AI+Productivity+Assistant",
-      "https://dummyimage.com/600x400/000/fff&text=Boost+Your+Efficiency",
-      "https://dummyimage.com/600x400/000/fff&text=Smart+Reminders+AI"
-    ]
-  }
-  ```
+| Action Name         | Description                             |
+| ------------------- | --------------------------------------- |
+| `campaign_idea`     | Generate a marketing campaign idea      |
+| `ad_copy`           | Create an ad copy for promotion         |
+| `blog_post`         | Generate a blog post about the product  |
+| `video_script`      | Generate a video script for an ad       |
+| `social_media_post` | Generate social media posts             |
+| `hashtags`          | Generate hashtags for social media      |
+| `scraped_images`    | Fetch images using SerpAPI              |
+| `generated_images`  | Generate AI-powered images using Gemini |
 
-## Project Structure
+---
+
+## **Project Structure**
 
 ```
 ├── agents/
@@ -98,42 +100,29 @@ By default, the server will run at `http://127.0.0.1:5000/`.
 │   ├── generate_video_script.py
 │   ├── scrape_images_with_serpapi.py
 │   ├── MarketingAgent.py
+├── social_media/
+│   ├── social_media_manager.py
 ├── config/
 │   ├── config.py
-├── main.py
+│   ├── .env
+├── ui.py          # Streamlit UI file
+├── campaign.py    # Standalone function for campaign generation
+├── main.py        # Main file to run the project
 ├── requirements.txt
 ├── README.md
 ```
 
-## Configuration
+---
 
-- **`config/config.py`**: Loads API keys from environment variables.
-- **`main.py`**: Main Flask application that exposes the `/generate_campaign` endpoint.
-- **`agents/`**: Contains modules for generating different types of marketing content.
-  - `generate_ad_copy.py`: Creates ad copies.
-  - `generate_blog.py`: Generates blog posts.
-  - `generate_campaign.py`: Manages marketing campaigns.
-  - `generate_hashtags.py`: Suggests relevant hashtags.
-  - `generate_images_with_gemini.py`: Generates images using AI.
-  - `generate_social_media_post.py`: Generates social media captions.
-  - `generate_video_script.py`: Writes video scripts.
-  - `scrape_images_with_serpapi.py`: Scrapes images using SerpAPI.
-  - `MarketingAgent.py`: Manages campaign execution.
+## **How It Works**
 
-## Dependencies
+1. The user **fills in details** in the **Streamlit UI**.
+2. The UI **formats the input** and sends it to `generate_campaign()`.
+3. The backend processes the request using **AI models**.
+4. The **result is displayed** on the UI in a structured format.
 
-Ensure the following dependencies are installed:
+---
 
-```bash
-pip install Flask python-dotenv requests serpapi pillow
-```
+## **License**
 
-## How It Works
-
-1. The user sends a `POST` request to `/generate_campaign` with a `prompt` and a list of `actions`.
-2. The backend processes the request, generating marketing content using AI models.
-3. The response includes ad copies, blog posts, hashtags, and generated images.
-
-## License
-
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
