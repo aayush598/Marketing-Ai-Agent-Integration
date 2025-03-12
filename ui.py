@@ -1,5 +1,6 @@
 import streamlit as st
 from campaign import generate_campaign
+from audience import get_target_audience
 
 # Define available actions
 ACTIONS = [
@@ -19,7 +20,7 @@ st.title("Marketing Campaign Generator")
 product_name = st.text_input("Product Name:")
 product_features = st.text_area("Product Features (comma-separated):")
 description = st.text_area("Campaign Description:")
-audience = st.text_input("Target Audience:")
+audience = get_target_audience()
 platform = st.selectbox("Select Platform:", ["Twitter", "LinkedIn", "Instagram", "Facebook", "YouTube", "Other"])
 
 # Multi-select for actions
