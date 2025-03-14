@@ -1,6 +1,9 @@
 import streamlit as st
 from campaign import generate_campaign
 from audience import get_target_audience
+import google.generativeai as genai
+
+gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
 
 # Define available actions
 ACTIONS = [
@@ -34,6 +37,14 @@ if "modifications" not in st.session_state:
 if "final_blog" not in st.session_state:
     st.session_state.final_blog = None
 
+# Define session states
+if "video_script_info" not in st.session_state:
+    st.session_state.video_script_info = None
+if "video_script_text" not in st.session_state:
+    st.session_state.video_script_text = ""
+if "video_script_modifications" not in st.session_state:
+    st.session_state.video_script_modifications = ""
+
 # Prepare formatted_prompt (Moved outside button scope)
 if product_name and product_features and description and audience and platform and selected_actions:
     product_features = [feature.strip() for feature in product_features.split(',')]
@@ -48,6 +59,23 @@ if st.button("Generate Campaign"):
         if "blog_post" in selected_actions:
             response = generate_campaign(formatted_prompt, ["blog_post"])
             st.session_state.blog_structure = response.get("blog_structure", "No structure generated.")
+        elif "video_script" in selected_actions:
+            response = gemini_text_model.generate_content(
+                f"""
+                Provide only the following structured details for a video script:
+                - Suitable Tone
+                - Best Platform for Posting
+                - Recommended Video Length
+                - Content Headings only (Hook, Problem, Solution, Features, Social Proof, CTA)
+                
+                Product: {product_name}
+                Features: {product_features}
+                Target Audience: {audience}
+                Platform: {platform}
+                """
+            )
+            st.session_state.video_script_info = response.text
+            st.rerun()
     else:
         st.warning("Please fill in all fields and select at least one action.")
 
@@ -102,3 +130,28 @@ if st.session_state.blog_structure:
 if st.session_state.final_blog:
     st.subheader("Generated Blog")
     st.text_area("Final Blog Content", st.session_state.final_blog, height=400)
+
+if st.session_state.video_script_info:
+    st.subheader("Suggested Video Script Info")
+    st.text_area("Script Info", st.session_state.video_script_info, height=300, key="video_script_info_display")
+    
+    if st.button("Confirm & Generate Video Script"):
+        response = gemini_text_model.generate_content(
+            f"Generate a video script based on the following details: {st.session_state.video_script_info}"
+        )
+        st.session_state.video_script_text = response.text
+        st.rerun()
+
+if st.session_state.video_script_text:
+    st.subheader("Generated Video Script")
+    st.text_area("Video Script", st.session_state.video_script_text, height=300, key="video_script_display")
+    
+    st.session_state.video_script_modifications = st.text_area("Modify Script (Optional):", key="video_script_modification_input")
+    
+    if st.button("Modify Script") and st.session_state.video_script_modifications:
+        response = gemini_text_model.generate_content(
+            f'''Modify the following video script based on user input: {st.session_state.video_script_text}.
+            Modifications: {st.session_state.video_script_modifications}'''
+        )
+        st.session_state.video_script_text = response.text
+        st.rerun()
