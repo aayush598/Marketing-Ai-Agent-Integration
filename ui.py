@@ -37,13 +37,14 @@ if "modifications" not in st.session_state:
 if "final_blog" not in st.session_state:
     st.session_state.final_blog = None
 
-# Define session states
 if "video_script_info" not in st.session_state:
     st.session_state.video_script_info = None
 if "video_script_text" not in st.session_state:
     st.session_state.video_script_text = ""
 if "video_script_modifications" not in st.session_state:
     st.session_state.video_script_modifications = ""
+
+
 
 # Prepare formatted_prompt (Moved outside button scope)
 if product_name and product_features and description and audience and platform and selected_actions:
@@ -67,6 +68,8 @@ if st.button("Generate Campaign"):
                 - Best Platform for Posting
                 - Recommended Video Length
                 - Content Headings only (Hook, Problem, Solution, Features, Social Proof, CTA)
+                - Do not include any further details in content heading secting except the headings
+                - Headings must not be greated than 3-4 words
                 
                 Product: {product_name}
                 Features: {product_features}
@@ -133,25 +136,63 @@ if st.session_state.final_blog:
 
 if st.session_state.video_script_info:
     st.subheader("Suggested Video Script Info")
-    st.text_area("Script Info", st.session_state.video_script_info, height=300, key="video_script_info_display")
-    
+    st.text_area("Script Info", st.session_state.video_script_info, height=300)
+
+    st.session_state.video_script_modifications = st.text_area(
+        "Modify Script Info (Before Generation):",
+        st.session_state.video_script_modifications
+    )
+
+    if st.button("Modify Info"):
+        if st.session_state.video_script_modifications:
+            modified_response = gemini_text_model.generate_content(
+                f"""
+                Modify the following video script details based on user input:
+                {st.session_state.video_script_info}
+
+                Modifications: {st.session_state.video_script_modifications}
+
+                Instructions : 
+                 Provide only the following structured details for a video script:
+                - Suitable Tone
+                - Best Platform for Posting
+                - Recommended Video Length
+                - Content Headings only (Hook, Problem, Solution, Features, Social Proof, CTA)
+                - Do not include any further details in content heading secting except the headings
+                - Headings must not be greated than 3-4 words
+                """
+            )
+            st.session_state.video_script_info = modified_response.text
+            st.rerun()
+
     if st.button("Confirm & Generate Video Script"):
         response = gemini_text_model.generate_content(
-            f"Generate a video script based on the following details: {st.session_state.video_script_info}"
+            f"""
+            Generate a video script based on the following details:
+            {st.session_state.video_script_info}
+            """
         )
         st.session_state.video_script_text = response.text
         st.rerun()
 
 if st.session_state.video_script_text:
     st.subheader("Generated Video Script")
-    st.text_area("Video Script", st.session_state.video_script_text, height=300, key="video_script_display")
-    
-    st.session_state.video_script_modifications = st.text_area("Modify Script (Optional):", key="video_script_modification_input")
-    
+    st.text_area("Video Script", st.session_state.video_script_text, height=300)
+
+    # ✅ Providing a single input field for modification at the end
+    st.session_state.video_script_modifications = st.text_area(
+        "Modify Script (Optional):", 
+        st.session_state.video_script_modifications
+    )
+
     if st.button("Modify Script") and st.session_state.video_script_modifications:
         response = gemini_text_model.generate_content(
-            f'''Modify the following video script based on user input: {st.session_state.video_script_text}.
-            Modifications: {st.session_state.video_script_modifications}'''
+            f"""
+            Modify the following video script based on user input:
+            {st.session_state.video_script_text}
+            
+            Modifications: {st.session_state.video_script_modifications}
+            """
         )
         st.session_state.video_script_text = response.text
         st.rerun()
