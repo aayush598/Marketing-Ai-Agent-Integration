@@ -3,7 +3,7 @@ from agents.generate_ad_copy import generate_ad_copy
 from agents.scrape_images_with_serpapi import scrape_images_with_serpapi
 from agents.generate_images_with_gemini import generate_images_with_gemini
 from agents.generate_blog import generate_blog_structure, modify_blog_structure, generate_blog_from_structure, modify_generated_blog
-from agents.generate_video_script import generate_video_script, modify_video_script
+from agents.generate_video_script import generate_video_script_from_structure, modify_generated_video_script, generate_video_script_structure, modify_video_script_structure
 from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post
 from agents.generate_hashtags import generate_hashtags
 
@@ -59,13 +59,21 @@ class MarketingAgent:
 
         # Handle Video Script Generation
         if "video_script" in actions:
-            video_data = modifications.get("video_script", None) if modifications else None
+            video_data = modifications.get("video_script_structure", None) if modifications else None
             video_modifications = modifications.get("video_script_modifications", None) if modifications else None
+            generated_video_modifications = modifications.get("generated_video_script_modifications", None) if modifications else None
 
-            if video_modifications and video_data:
-                results["video_script"] = modify_video_script(video_data, video_modifications)
+            if confirm_final and video_data:
+                results["video_script"] = generate_video_script_from_structure(video_data)
+
+            elif video_modifications and video_data:
+                results["video_script_structure"] = modify_video_script_structure(video_data, video_modifications)
+
+            elif generated_video_modifications and "video_script" in modifications:
+                results["video_script"] = modify_generated_video_script(modifications["video_script"], generated_video_modifications)
+
             else:
-                results["video_script"] = generate_video_script(product_name, product_features, description, audience, platform)
+                results["video_script_structure"] = generate_video_script_structure(product_name, product_features, description, audience, platform)
 
         # Handle Social Media Post Generation
         if "social_media_post" in actions:

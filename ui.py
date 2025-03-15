@@ -2,6 +2,9 @@ import streamlit as st
 from audience import get_target_audience
 from agents.MarketingAgent import MarketingAgent
 import google.generativeai as genai
+from config.config import GEMINI_API_KEY
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize MarketingAgent
 marketing_agent = MarketingAgent(groq_api_key="YOUR_GROQ_API_KEY", serpapi_key="YOUR_SERPAPI_KEY")
@@ -33,7 +36,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 # Define session states
 session_keys = [
     "blog_info", "blog_post_text", "blog_modifications","blog_post_modifications",
-    "video_script_info", "video_script_text", "video_script_modifications",
+    "video_script_info", "video_script_text", "video_script_modifications","generated_video_script_modifications",
     "social_media_info", "social_media_post_text", "social_media_modifications"
 ]
 
@@ -55,10 +58,11 @@ if st.button("Generate Campaign"):
         
         if "blog_structure" in response:
             st.session_state.blog_info = response["blog_structure"]
-        if "video_script" in response:
-            st.session_state.video_script_info = response["video_script"]
+        if "video_script_structure" in response:
+            st.session_state.video_script_info = response["video_script_structure"]
         if "social_media_info" in response:
             st.session_state.social_media_info = response["social_media_info"]
+
         
         st.rerun()
     else:
@@ -118,28 +122,29 @@ if st.session_state.blog_post_text:
 
 ### **🔹 Video Script Generation**
 if st.session_state.video_script_info:
-    st.subheader("Suggested Video Script Info")
-    st.text_area("Script Info", st.session_state.video_script_info, height=300)
+    st.subheader("Suggested Video Script Format")
+    st.text_area("Video Script Details", st.session_state.video_script_info, height=300)
 
+    # Input for modifying the video script format before generation
     st.session_state.video_script_modifications = st.text_area(
-        "Modify Script Info (Before Generation):", st.session_state.video_script_modifications
+        "Modify Video Script Format (Before Generation):", st.session_state.video_script_modifications
     )
 
-    if st.button("Modify Video Script Info"):
+    if st.button("Modify Video Script Format"):
         if st.session_state.video_script_modifications:
             response = marketing_agent.run_campaign(
                 formatted_prompt, 
                 actions=["video_script"], 
-                modifications={"video_script": st.session_state.video_script_info, "video_script_modifications": st.session_state.video_script_modifications}
+                modifications={"video_script_structure": st.session_state.video_script_info, "video_script_modifications": st.session_state.video_script_modifications}
             )
-            st.session_state.video_script_info = response["video_script"]
+            st.session_state.video_script_info = response["video_script_structure"]
             st.rerun()
 
     if st.button("Confirm & Generate Video Script"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["video_script"], 
-            modifications={"video_script": st.session_state.video_script_info}, 
+            modifications={"video_script_structure": st.session_state.video_script_info}, 
             confirm_final=True
         )
         st.session_state.video_script_text = response["video_script"]
@@ -147,17 +152,22 @@ if st.session_state.video_script_info:
 
 if st.session_state.video_script_text:
     st.subheader("Generated Video Script")
-    st.text_area("Video Script", st.session_state.video_script_text, height=300)
+    st.text_area("Final Video Script", st.session_state.video_script_text, height=400)
 
-    st.session_state.video_script_modifications = st.text_area(
-        "Modify Script (Optional):", st.session_state.video_script_modifications
+    # ✅ Adding an input field for modifying the generated video script
+    st.session_state.generated_video_script_modifications = st.text_area(
+        "Modify Video Script (Optional):", 
+        st.session_state.generated_video_script_modifications
     )
 
     if st.button("Modify Video Script"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["video_script"], 
-            modifications={"video_script": st.session_state.video_script_text, "video_script_modifications": st.session_state.video_script_modifications}
+            modifications={
+                "video_script": st.session_state.video_script_text, 
+                "generated_video_script_modifications": st.session_state.generated_video_script_modifications
+            }
         )
         st.session_state.video_script_text = response["video_script"]
         st.rerun()
@@ -207,3 +217,6 @@ if st.session_state.social_media_post_text:
         )
         st.session_state.social_media_post_text = response["social_media_post"]
         st.rerun()
+
+
+print(f"st.session_state : {st.session_state}")
