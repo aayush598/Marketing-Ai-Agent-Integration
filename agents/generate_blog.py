@@ -1,42 +1,59 @@
-def generate_blog_structure(self, product_name, product_features, description, audience, platform):
-    """Generate an initial blog structure with headings and subheadings."""
+import google.generativeai as genai
+
+gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
+
+def generate_blog_structure(product_name, product_features, description, audience, platform):
+    """Generate structured details for a blog post."""
     prompt = f"""
-    Generate a structured blog outline (headings and subheadings) for:
+    Provide only the following structured details for a blog post:
+    - Suitable Tone
+    - SEO Optimization Techniques
+    - Recommended Content Length
+    - Content Headings (For example Intro, Problem, Solution, Features, Benefits, Conclusion, CTA)
+    - Keep headings max 3-4 words
     
     Product: {product_name}
     Features: {product_features}
-    Description: {description}
     Target Audience: {audience}
     Platform: {platform}
-
-    The structure should be well-organized and SEO-friendly. Do not write the full blog, only the outline.
     """
-    response = self.gemini_text_model.generate_content(prompt)
-    return response.text  # Return only the structure
+    response = gemini_text_model.generate_content(prompt)
+    return response.text
 
-def modify_blog_structure(self, current_structure, modification_prompt):
-    """Modify the existing blog structure based on user input."""
+def modify_blog_structure(existing_structure, modifications):
+    """Modify the structured details of a blog post."""
     prompt = f"""
-    Here is the current blog structure:
+    Modify the following blog post details based on user input:
+    {existing_structure}
+    
+    Modifications: {modifications}
 
-    {current_structure}
-
-    The user wants the following modifications:
-    {modification_prompt}
-
-    Update the structure accordingly while keeping it well-organized and SEO-friendly.
+    Instructions :
+    Provide only the following structured details for a blog post:
+    - Suitable Tone
+    - SEO Optimization Techniques
+    - Recommended Content Length
+    - Content Headings (For example Intro, Problem, Solution, Features, Benefits, Conclusion, CTA etc)
+    - Keep headings max 3-4 words
     """
-    response = self.gemini_text_model.generate_content(prompt)
-    return response.text  # Return updated structure
+    response = gemini_text_model.generate_content(prompt)
+    return response.text
 
-def generate_blog_from_structure(self, final_structure):
-    """Generate the full blog content based on the confirmed structure."""
+def generate_blog_from_structure(blog_structure):
+    """Generate a complete blog post based on structured details."""
+    prompt = f"Generate a detailed blog post based on the following structured details:\n{blog_structure}"
+    response = gemini_text_model.generate_content(prompt)
+    return response.text
+
+def modify_generated_blog(blog_content, modifications):
+    """Modify an already generated blog post based on user input."""
     prompt = f"""
-    Based on the following blog structure, generate a full detailed blog post:
+    Modify the following blog post based on user input:
+    {blog_content}
 
-    {final_structure}
+    Modifications: {modifications}
 
-    Ensure the blog is engaging, informative, and SEO-optimized.
+    Ensure the modifications improve clarity, engagement, and SEO while keeping the original structure intact.
     """
-    response = self.gemini_text_model.generate_content(prompt)
-    return response.text  # Return full blog content
+    response = gemini_text_model.generate_content(prompt)
+    return response.text
