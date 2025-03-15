@@ -4,7 +4,7 @@ from agents.scrape_images_with_serpapi import scrape_images_with_serpapi
 from agents.generate_images_with_gemini import generate_images_with_gemini
 from agents.generate_blog import generate_blog_structure, modify_blog_structure, generate_blog_from_structure, modify_generated_blog
 from agents.generate_video_script import generate_video_script_from_structure, modify_generated_video_script, generate_video_script_structure, modify_video_script_structure
-from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post
+from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post
 from agents.generate_hashtags import generate_hashtags
 
 import google.generativeai as genai
@@ -76,16 +76,23 @@ class MarketingAgent:
                 results["video_script_structure"] = generate_video_script_structure(product_name, product_features, description, audience, platform)
 
         # Handle Social Media Post Generation
+        # Handle Social Media Post Generation
         if "social_media_post" in actions:
-            social_media_data = modifications.get("social_media_info", None) if modifications else None
+            social_media_data = modifications.get("social_media_structure", None) if modifications else None
             social_media_modifications = modifications.get("social_media_modifications", None) if modifications else None
+            generated_social_media_modifications = modifications.get("generated_social_media_post_modifications", None) if modifications else None
 
             if confirm_final and social_media_data:
-                results["social_media_post"] = generate_social_media_post(social_media_data)
+                results["social_media_post"] = generate_social_media_post_from_structure(social_media_data)
+
             elif social_media_modifications and social_media_data:
-                results["social_media_info"] = modify_social_media_structure(social_media_data, social_media_modifications)
+                results["social_media_structure"] = modify_social_media_structure(social_media_data, social_media_modifications)
+
+            elif generated_social_media_modifications and "social_media_post" in modifications:
+                results["social_media_post"] = modify_generated_social_media_post(modifications["social_media_post"], generated_social_media_modifications)
+
             else:
-                results["social_media_info"] = generate_social_media_structure(product_name, product_features, description, audience, platform)
+                results["social_media_structure"] = generate_social_media_structure(product_name, product_features, description, audience, platform)
 
         # Execute other actions
         for action in actions:

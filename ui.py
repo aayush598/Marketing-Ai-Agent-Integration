@@ -37,7 +37,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 session_keys = [
     "blog_info", "blog_post_text", "blog_modifications","blog_post_modifications",
     "video_script_info", "video_script_text", "video_script_modifications","generated_video_script_modifications",
-    "social_media_info", "social_media_post_text", "social_media_modifications"
+    "social_media_info", "social_media_post_text", "social_media_modifications","generated_social_media_post_modifications"
 ]
 
 for key in session_keys:
@@ -60,8 +60,8 @@ if st.button("Generate Campaign"):
             st.session_state.blog_info = response["blog_structure"]
         if "video_script_structure" in response:
             st.session_state.video_script_info = response["video_script_structure"]
-        if "social_media_info" in response:
-            st.session_state.social_media_info = response["social_media_info"]
+        if "social_media_structure" in response:
+            st.session_state.social_media_info = response["social_media_structure"]
 
         
         st.rerun()
@@ -174,28 +174,29 @@ if st.session_state.video_script_text:
 
 ### **🔹 Social Media Post Generation**
 if st.session_state.social_media_info:
-    st.subheader("Suggested Social Media Post Info")
-    st.text_area("Post Info", st.session_state.social_media_info, height=300)
+    st.subheader("Suggested Social Media Post Format")
+    st.text_area("Social Media Post Details", st.session_state.social_media_info, height=300)
 
+    # Input for modifying the structured social media post format before full generation
     st.session_state.social_media_modifications = st.text_area(
-        "Modify Post Info (Before Generation):", st.session_state.social_media_modifications
+        "Modify Social Media Post Format (Before Generation):", st.session_state.social_media_modifications
     )
 
-    if st.button("Modify Social Media Info"):
+    if st.button("Modify Social Media Post Format"):
         if st.session_state.social_media_modifications:
             response = marketing_agent.run_campaign(
                 formatted_prompt, 
                 actions=["social_media_post"], 
-                modifications={"social_media_info": st.session_state.social_media_info, "social_media_modifications": st.session_state.social_media_modifications}
+                modifications={"social_media_structure": st.session_state.social_media_info, "social_media_modifications": st.session_state.social_media_modifications}
             )
-            st.session_state.social_media_info = response["social_media_info"]
+            st.session_state.social_media_info = response["social_media_structure"]
             st.rerun()
 
     if st.button("Confirm & Generate Social Media Post"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["social_media_post"], 
-            modifications={"social_media_info": st.session_state.social_media_info}, 
+            modifications={"social_media_structure": st.session_state.social_media_info}, 
             confirm_final=True
         )
         st.session_state.social_media_post_text = response["social_media_post"]
@@ -203,20 +204,24 @@ if st.session_state.social_media_info:
 
 if st.session_state.social_media_post_text:
     st.subheader("Generated Social Media Post")
-    st.text_area("Social Media Post", st.session_state.social_media_post_text, height=300)
+    st.text_area("Final Social Media Post", st.session_state.social_media_post_text, height=400)
 
-    st.session_state.social_media_modifications = st.text_area(
-        "Modify Post (Optional):", st.session_state.social_media_modifications
+    # ✅ Adding an input field for modifying the generated social media post
+    st.session_state.generated_social_media_post_modifications = st.text_area(
+        "Modify Social Media Post (Optional):", 
+        st.session_state.generated_social_media_post_modifications
     )
 
     if st.button("Modify Social Media Post"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["social_media_post"], 
-            modifications={"social_media_post": st.session_state.social_media_post_text, "social_media_modifications": st.session_state.social_media_modifications}
+            modifications={
+                "social_media_post": st.session_state.social_media_post_text, 
+                "generated_social_media_post_modifications": st.session_state.generated_social_media_post_modifications
+            }
         )
         st.session_state.social_media_post_text = response["social_media_post"]
         st.rerun()
-
 
 print(f"st.session_state : {st.session_state}")
