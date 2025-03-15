@@ -39,7 +39,7 @@ def modify_social_media_structure(existing_structure, modifications):
 
 def generate_social_media_post_from_structure(post_structure):
     """Generate a complete social media post from structured details."""
-    prompt = f"Generate a detailed social media post based on the following structured details with no extra stars and do not use any special characters:\n{post_structure}"
+    prompt = f"Generate a detailed social media post based on the following structured details with no extra stars and do not use any special characters,only use characters and hashtag , do add any stars or emojis:\n{post_structure}"
     response = gemini_text_model.generate_content(prompt)
     return response.text
 
