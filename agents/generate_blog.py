@@ -1,6 +1,6 @@
 import google.generativeai as genai
 
-gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
+gemini_text_model = genai.GenerativeModel('gemini-2.0-flash-lite')
 
 def generate_blog_structure(product_name, product_features, description, audience, platform):
     """Generate structured details for a blog post."""

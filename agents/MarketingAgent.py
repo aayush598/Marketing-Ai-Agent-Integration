@@ -4,7 +4,7 @@ from agents.scrape_images_with_serpapi import scrape_images_with_serpapi
 from agents.generate_images_with_gemini import generate_images_with_gemini
 from agents.generate_blog import generate_blog_structure, modify_blog_structure, generate_blog_from_structure, modify_generated_blog
 from agents.generate_video_script import generate_video_script_from_structure, modify_generated_video_script, generate_video_script_structure, modify_video_script_structure
-from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post
+from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post, post_social_media_content
 from agents.generate_hashtags import generate_hashtags
 
 import google.generativeai as genai
@@ -13,8 +13,8 @@ class MarketingAgent:
     def __init__(self, groq_api_key, serpapi_key):
         self.groq_api_key = groq_api_key
         self.serpapi_key = serpapi_key
-        self.gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
-        self.gemini_vision_model = genai.GenerativeModel('gemini-1.5-pro')
+        self.gemini_text_model = genai.GenerativeModel('gemini-2.0-flash-lite')
+        self.gemini_vision_model = genai.GenerativeModel('gemini-2.0-flash-lite')
 
     def run_campaign(self, prompt, actions=None, modifications=None, confirm_final=False):
         """
@@ -76,11 +76,12 @@ class MarketingAgent:
                 results["video_script_structure"] = generate_video_script_structure(product_name, product_features, description, audience, platform)
 
         # Handle Social Media Post Generation
-        # Handle Social Media Post Generation
         if "social_media_post" in actions:
             social_media_data = modifications.get("social_media_structure", None) if modifications else None
             social_media_modifications = modifications.get("social_media_modifications", None) if modifications else None
             generated_social_media_modifications = modifications.get("generated_social_media_post_modifications", None) if modifications else None
+            social_media_platform = modifications.get("social_media_platform", None) if modifications else None
+            social_media_post = modifications.get("social_media_post", None) if modifications else None
 
             if confirm_final and social_media_data:
                 results["social_media_post"] = generate_social_media_post_from_structure(social_media_data)
@@ -91,8 +92,17 @@ class MarketingAgent:
             elif generated_social_media_modifications and "social_media_post" in modifications:
                 results["social_media_post"] = modify_generated_social_media_post(modifications["social_media_post"], generated_social_media_modifications)
 
+            elif social_media_platform and social_media_post:
+                results["social_media_post"] = social_media_post
             else:
                 results["social_media_structure"] = generate_social_media_structure(product_name, product_features, description, audience, platform)
+
+            print(f"results: {results}")
+            # ✅ If platform is provided, post the content
+            if social_media_platform and "social_media_post" in results:
+                print(f"Success ")
+                post_result = post_social_media_content(social_media_platform, results["social_media_post"])
+                results["social_media_post_result"] = post_result
 
         # Execute other actions
         for action in actions:

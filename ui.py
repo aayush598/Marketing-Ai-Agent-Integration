@@ -224,4 +224,18 @@ if st.session_state.social_media_post_text:
         st.session_state.social_media_post_text = response["social_media_post"]
         st.rerun()
 
-print(f"st.session_state : {st.session_state}")
+    # ✅ **Dropdown for Social Media Platform Selection**
+    social_media_platform = st.selectbox("Select Platform to Post:", ["Twitter", "YouTube", "Email"])
+
+    if st.button("Post to Social Media"):
+        print(f"social_media_post : {st.session_state.social_media_post_text} | social_media_platform : {social_media_platform}")
+        response = marketing_agent.run_campaign(
+            formatted_prompt, 
+            actions=["social_media_post"], 
+            modifications={"social_media_post": st.session_state.social_media_post_text, "social_media_platform": social_media_platform}
+        )
+        print(f"RESPONSE : {response}")
+        if "social_media_post_result" in response and response["social_media_post_result"]:
+            st.success(f"✅ Successfully posted to {social_media_platform}!")
+        else:
+            st.error(f"❌ Failed to post to {social_media_platform}.")

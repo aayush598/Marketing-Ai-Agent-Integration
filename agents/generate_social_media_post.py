@@ -1,6 +1,8 @@
 import google.generativeai as genai
+from social_media.social_media_manager import SocialMediaManager
 
-gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
+gemini_text_model = genai.GenerativeModel('gemini-2.0-flash-lite')
+social_media_manager = SocialMediaManager()
 
 def generate_social_media_structure(product_name, product_features, description, audience, platform):
     """Generate structured details for a social media post."""
@@ -37,7 +39,7 @@ def modify_social_media_structure(existing_structure, modifications):
 
 def generate_social_media_post_from_structure(post_structure):
     """Generate a complete social media post from structured details."""
-    prompt = f"Generate a detailed social media post based on the following structured details:\n{post_structure}"
+    prompt = f"Generate a detailed social media post based on the following structured details with no extra stars and do not use any special characters:\n{post_structure}"
     response = gemini_text_model.generate_content(prompt)
     return response.text
 
@@ -55,3 +57,8 @@ def modify_generated_social_media_post(post_content, modifications):
     """
     response = gemini_text_model.generate_content(prompt)
     return response.text
+
+def post_social_media_content(platform, content):
+    print(f"Platform : {platform} | Content {content}")
+    """Post generated content to social media platforms."""
+    return social_media_manager.post(platform, content)
