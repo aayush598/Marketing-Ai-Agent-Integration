@@ -44,6 +44,13 @@ if "video_script_text" not in st.session_state:
 if "video_script_modifications" not in st.session_state:
     st.session_state.video_script_modifications = ""
 
+# Define session states
+if "social_media_info" not in st.session_state:
+    st.session_state.social_media_info = None
+if "social_media_post_text" not in st.session_state:
+    st.session_state.social_media_post_text = ""
+if "social_media_modifications" not in st.session_state:
+    st.session_state.social_media_modifications = ""
 
 
 # Prepare formatted_prompt (Moved outside button scope)
@@ -78,6 +85,25 @@ if st.button("Generate Campaign"):
                 """
             )
             st.session_state.video_script_info = response.text
+            st.rerun()
+        elif "social_media_post" in selected_actions:
+            response = gemini_text_model.generate_content(
+                f"""
+                For a social media post about:
+                - Product: {product_name}
+                - Features: {product_features}
+                - Target Audience: {audience}
+                
+                Provide ONLY the following details:
+                1️⃣ **Engagement Strategies**: (e.g., storytelling, CTA, question-based)  
+                2️⃣ **Use of Emojis & Readability**: (How to make the post visually appealing, scannable)  
+                3️⃣ **Best Tone**: (Casual, professional, humorous, inspiring, persuasive, etc.)  
+
+                🚨 *DO NOT* include the full post or any other details. Focus only on these aspects. 
+                """
+            )
+
+            st.session_state.social_media_info = response.text
             st.rerun()
     else:
         st.warning("Please fill in all fields and select at least one action.")
@@ -195,4 +221,65 @@ if st.session_state.video_script_text:
             """
         )
         st.session_state.video_script_text = response.text
+        st.rerun()
+
+if st.session_state.social_media_info:
+    st.subheader("Suggested Social Media Post Info")
+    st.text_area("Post Info", st.session_state.social_media_info, height=300)
+
+    st.session_state.social_media_modifications = st.text_area(
+        "Modify Post Info (Before Generation):",
+        st.session_state.social_media_modifications
+    )
+
+    if st.button("Modify Info"):
+        if st.session_state.social_media_modifications:
+            modified_response = gemini_text_model.generate_content(
+                f"""
+                Modify the following social media post details based on user input:
+                {st.session_state.social_media_info}
+
+                Modifications: {st.session_state.social_media_modifications}
+
+                Provide ONLY the following details:
+                1️⃣ **Engagement Strategies**: (e.g., storytelling, CTA, question-based)  
+                2️⃣ **Use of Emojis & Readability**: (How to make the post visually appealing, scannable)  
+                3️⃣ **Best Tone**: (Casual, professional, humorous, inspiring, persuasive, etc.)  
+
+                🚨 *DO NOT* include the full post or any other details. Focus only on these aspects. 
+                
+                """
+            )
+            st.session_state.social_media_info = modified_response.text
+            st.rerun()
+
+    if st.button("Confirm & Generate Social Media Post"):
+        response = gemini_text_model.generate_content(
+            f"""
+            Generate a detailed social media post based on the following structured details:
+            {st.session_state.social_media_info}
+            """
+        )
+        st.session_state.social_media_post_text = response.text
+        st.rerun()
+
+if st.session_state.social_media_post_text:
+    st.subheader("Generated Social Media Post")
+    st.text_area("Social Media Post", st.session_state.social_media_post_text, height=300)
+
+    st.session_state.social_media_modifications = st.text_area(
+        "Modify Post (Optional):", 
+        st.session_state.social_media_modifications
+    )
+
+    if st.button("Modify Post") and st.session_state.social_media_modifications:
+        response = gemini_text_model.generate_content(
+            f"""
+            Modify the following social media post based on user input:
+            {st.session_state.social_media_post_text}
+            
+            Modifications: {st.session_state.social_media_modifications}
+            """
+        )
+        st.session_state.social_media_post_text = response.text
         st.rerun()

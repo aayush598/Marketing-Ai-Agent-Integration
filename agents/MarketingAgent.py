@@ -15,7 +15,7 @@ class MarketingAgent:
         self.gemini_text_model = genai.GenerativeModel('gemini-1.5-pro')
         self.gemini_vision_model = genai.GenerativeModel('gemini-1.5-pro')
 
-    def run_campaign(self, prompt, actions=None, blog_modifications=None, confirm_blog=False):
+    def run_campaign(self, prompt, actions=None, blog_modifications=None, confirm_blog=False,social_media_modifications=None, confirm_social_media=False):
         """
         Run selected marketing actions based on the provided list.
         - Handles blog structure modification.
@@ -55,9 +55,48 @@ class MarketingAgent:
                 # Step 3: Confirm & Generate Final Blog
                 results["blog_post"] = generate_blog_from_structure(self, blog_modifications)
 
+        if "social_media_post" in actions:
+            response = self.gemini_text_model.generate_content(
+                f"""
+                For a social media post about:
+                - Product: {product_name}
+                - Features: {product_features}
+                - Target Audience: {audience}
+                
+                Provide ONLY the following details:
+                1️⃣ **Engagement Strategies**: (e.g., storytelling, CTA, question-based)  
+                2️⃣ **Use of Emojis & Readability**: (How to make the post visually appealing, scannable)  
+                3️⃣ **Best Tone**: (Casual, professional, humorous, inspiring, persuasive, etc.)  
+
+                🚨 *DO NOT* include the full post or any other details. Focus only on these aspects. 
+                """
+            )
+            results["social_media_post"] = response.text
+
         # Execute other actions
         for action in actions:
-            if action in action_map and action != "blog_post":
+            if action in action_map and ((action != "blog_post") or (action != "social_media_post")):
                 results[action] = action_map[action]()
+        
+
+        if "social_media_post" in actions and social_media_modifications:
+            modified_response = self.gemini_text_model.generate_content(
+                f"""
+                Modify the following social media post details:
+                {results.get("social_media_post", "")}
+                
+                Modifications: {social_media_modifications}
+                """
+            )
+            results["social_media_post"] = modified_response.text
+
+        if "social_media_post" in actions and confirm_social_media:
+            final_response = self.gemini_text_model.generate_content(
+                f"""
+                Generate a final, polished social media post based on the structured details:
+                {results.get("social_media_post", "")}
+                """
+            )
+            results["social_media_post"] = final_response.text
 
         return results
