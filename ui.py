@@ -12,6 +12,7 @@ marketing_agent = MarketingAgent(groq_api_key=GROQ_API_KEY, serpapi_key=SERPAPI_
 
 # Define available actions
 ACTIONS = [
+    "strategy", 
     "campaign_idea",
     "ad_copy",
     "blog_post",
@@ -75,6 +76,8 @@ if st.button("Generate Campaign"):
             st.session_state.generated_images = response["generated_images"]
         if "monitor_data" in response:
             st.session_state.monitor_data = response["monitor_data"]
+        if "strategy" in response:
+            st.session_state.strategy_data = response["strategy"]
 
         
         st.rerun()
@@ -355,3 +358,12 @@ if "monitor_data" in st.session_state:
     st.metric(label="⚙ Operational Efficiency", value=monitor_data["operational_efficiency"])
 
     st.success("✅ Monitoring data updated successfully!")
+
+### **🔹 Strategy View**
+if "strategy_data" in st.session_state:
+    st.subheader("🎯 Marketing Strategy")
+
+    strategy_data = st.session_state.strategy_data
+    st.text_area("📌 Strategy Details", strategy_data, height=400)
+
+    st.success("✅ Strategy generated successfully!")

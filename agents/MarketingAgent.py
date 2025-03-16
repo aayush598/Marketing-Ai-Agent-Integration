@@ -7,6 +7,7 @@ from agents.generate_video_script import generate_video_script_from_structure, m
 from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post, post_social_media_content
 from agents.generate_hashtags import generate_hashtags
 from agents.monitor_campaign import monitor_campaign 
+from agents.strategy_planner import generate_strategy
 
 import google.generativeai as genai
 
@@ -42,11 +43,14 @@ class MarketingAgent:
             "hashtags": lambda: generate_hashtags(self, product_name, product_features, description, audience, platform),
             "monitor": lambda: monitor_campaign(product_name, product_features, description, audience, platform),
         }
-        # print(f"Action : {actions}")
+        
         # ✅ Handle Monitoring
         if "monitor" in actions:
             results["monitor_data"] = monitor_campaign(product_name, product_features, description, audience, platform)
 
+        # ✅ Handle Strategy Generation
+        if "strategy" in actions:
+            results["strategy"] = generate_strategy(product_name, product_features, description, audience, platform)
 
         # Handle Blog Generation
         if "blog_post" in actions:
