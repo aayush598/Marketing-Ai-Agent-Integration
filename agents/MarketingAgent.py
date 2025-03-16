@@ -1,5 +1,5 @@
 from agents.generate_campaign import generate_campaign
-from agents.generate_ad_copy import generate_ad_copy
+from agents.generate_ad_copy import modify_generated_ad_copy, modify_ad_copy_structure, generate_ad_copy_from_structure,generate_ad_copy_structure
 from agents.scrape_images_with_serpapi import scrape_images_with_serpapi
 from agents.generate_images_with_gemini import generate_images_with_gemini
 from agents.generate_blog import generate_blog_structure, modify_blog_structure, generate_blog_from_structure, modify_generated_blog
@@ -33,7 +33,6 @@ class MarketingAgent:
         # Map actions to respective functions
         action_map = {
             "campaign_idea": lambda: generate_campaign(self, product_name, product_features, description, audience, platform),
-            "ad_copy": lambda: generate_ad_copy(self, product_name, product_features, description, audience, platform),
             "hashtags": lambda: generate_hashtags(self, product_name, product_features, description, audience, platform),
             "scraped_images": lambda: scrape_images_with_serpapi(self, product_name, product_features, description, audience, platform),
             "generated_images": lambda: generate_images_with_gemini(self, product_name, product_features, description, audience, platform),
@@ -100,9 +99,32 @@ class MarketingAgent:
             print(f"results: {results}")
             # ✅ If platform is provided, post the content
             if social_media_platform and "social_media_post" in results:
-                print(f"Success ")
                 post_result = post_social_media_content(social_media_platform, results["social_media_post"])
                 results["social_media_post_result"] = post_result
+
+        # Handle Ad Copy Generation
+        if "ad_copy" in actions:
+            ad_copy_data = modifications.get("ad_copy_structure", None) if modifications else None
+            ad_copy_modifications = modifications.get("ad_copy_modifications", None) if modifications else None
+            generated_ad_copy_modifications = modifications.get("generated_ad_copy_modifications", None) if modifications else None
+            ad_copy = modifications.get("ad_copy",None) if modifications else None
+
+            print(f"ad_copy_data : {ad_copy_data} | ad_copy_modifications : {ad_copy_modifications} | generated_ad_copy_modifications : {generated_ad_copy_modifications} | ad_copy : {ad_copy}")
+
+            if confirm_final and ad_copy_data:
+                results["ad_copy"] = generate_ad_copy_from_structure(ad_copy_data)
+
+            elif ad_copy_modifications and ad_copy_data:
+                results["ad_copy_structure"] = modify_ad_copy_structure(ad_copy_data, ad_copy_modifications)
+
+            elif generated_ad_copy_modifications and ad_copy:
+                print(f"ad_copy : {ad_copy} | generated_ad_copy_modifications : {generated_ad_copy_modifications}")
+                results["ad_copy"] = modify_generated_ad_copy(modifications["ad_copy"], generated_ad_copy_modifications)
+                print(f"Result : {results}")
+
+            else:
+                results["ad_copy_structure"] = generate_ad_copy_structure(product_name, product_features, description, audience, platform)
+
 
         # Execute other actions
         for action in actions:

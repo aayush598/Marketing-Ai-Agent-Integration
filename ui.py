@@ -35,6 +35,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 
 # Define session states
 session_keys = [
+    "ad_copy_structure", "ad_copy_text", "ad_copy_modifications",
     "blog_info", "blog_post_text", "blog_modifications","blog_post_modifications",
     "video_script_info", "video_script_text", "video_script_modifications","generated_video_script_modifications",
     "social_media_info", "social_media_post_text", "social_media_modifications","generated_social_media_post_modifications"
@@ -55,7 +56,9 @@ else:
 if st.button("Generate Campaign"):
     if formatted_prompt:
         response = marketing_agent.run_campaign(formatted_prompt, actions=selected_actions)
-        
+        print(f"Response : {response}")
+        if "ad_copy_structure" in response:
+            st.session_state.ad_copy_structure = response["ad_copy_structure"]
         if "blog_structure" in response:
             st.session_state.blog_info = response["blog_structure"]
         if "video_script_structure" in response:
@@ -239,3 +242,70 @@ if st.session_state.social_media_post_text:
             st.success(f"✅ Successfully posted to {social_media_platform}!")
         else:
             st.error(f"❌ Failed to post to {social_media_platform}.")
+
+### **🔹 Ad Copy Generation**
+if st.session_state.ad_copy_structure:
+    st.subheader("Suggested Ad Copy Format")
+    st.text_area("Ad Copy Details", st.session_state.ad_copy_structure, height=300)
+
+    # Modify ad copy format before full generation
+    st.session_state.ad_copy_modifications = st.text_area(
+        "Modify Ad Copy Format (Before Generation):", st.session_state.ad_copy_modifications
+    )
+
+    if st.button("Modify Ad Copy Format"):
+        if st.session_state.ad_copy_modifications:
+            response = marketing_agent.run_campaign(
+                formatted_prompt,
+                actions=["ad_copy"],
+                modifications={"ad_copy_structure": st.session_state.ad_copy_structure, "ad_copy_modifications": st.session_state.ad_copy_modifications}
+            )
+            st.session_state.ad_copy_structure = response["ad_copy_structure"]
+            st.rerun()
+
+    if st.button("Confirm & Generate Ad Copy"):
+        response = marketing_agent.run_campaign(
+            formatted_prompt,
+            actions=["ad_copy"],
+            modifications={"ad_copy_structure": st.session_state.ad_copy_structure},
+            confirm_final=True
+        )
+        st.session_state.ad_copy_text = response["ad_copy"]
+        st.rerun()
+
+if st.session_state.ad_copy_text:
+    st.subheader("Generated Ad Copy")
+    st.text_area("Final Ad Copy", st.session_state.ad_copy_text, height=400)
+
+    # ✅ Adding an input field for modifying the generated ad copy
+    st.session_state.ad_copy_modifications = st.text_area(
+        "Modify Ad Copy (Optional):", st.session_state.ad_copy_modifications
+    )
+
+    if st.button("Modify Ad Copy"):
+        response = marketing_agent.run_campaign(
+            formatted_prompt,
+            actions=["ad_copy"],
+            modifications={
+                "ad_copy": st.session_state.ad_copy_text,
+                "generated_ad_copy_modifications": st.session_state.ad_copy_modifications
+            }
+        )
+        st.session_state.ad_copy_text = response["ad_copy"]
+        st.rerun()
+
+    # # ✅ **Dropdown for Social Media Platform Selection**
+    # social_media_platform = st.selectbox("Select Platform to Post:", ["Twitter", "YouTube", "Email"])
+
+    # if st.button("Post Ad Copy to Social Media"):
+    #     print(f"Ad Copy: {st.session_state.ad_copy_text} | Platform: {social_media_platform}")
+    #     response = marketing_agent.run_campaign(
+    #         formatted_prompt,
+    #         actions=["ad_copy"],
+    #         modifications={"ad_copy": st.session_state.ad_copy_text, "social_media_platform": social_media_platform}
+    #     )
+    #     print(f"Response: {response}")
+    #     if "ad_copy_result" in response and response["ad_copy_result"]:
+    #         st.success(f"✅ Successfully posted to {social_media_platform}!")
+    #     else:
+    #         st.error(f"❌ Failed to post to {social_media_platform}.")
