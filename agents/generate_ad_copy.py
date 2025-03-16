@@ -34,6 +34,8 @@ def generate_ad_copy_structure(product_name, product_features, description, audi
     ⚡ **Platform-Specific Strategy:** {platform_guideline}
 
     🎯 *Ensure the structure is optimized for high engagement and conversions!*
+
+    Do not include special charactors and stars .Only use normal text characters.
     """
 
     response = gemini_text_model.generate_content(prompt)
@@ -64,6 +66,7 @@ def generate_ad_copy_from_structure(ad_copy_structure):
     {ad_copy_structure}
 
     ✅ Ensure the copy is **concise, persuasive, and platform-optimized**.
+    Do not include special charactors and stars .Only use normal text characters.
     """
     response = gemini_text_model.generate_content(prompt)
     return response.text

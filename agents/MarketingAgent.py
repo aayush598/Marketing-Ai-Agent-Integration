@@ -108,6 +108,7 @@ class MarketingAgent:
             ad_copy_modifications = modifications.get("ad_copy_modifications", None) if modifications else None
             generated_ad_copy_modifications = modifications.get("generated_ad_copy_modifications", None) if modifications else None
             ad_copy = modifications.get("ad_copy",None) if modifications else None
+            social_media_platform = modifications.get("social_media_platform", None) if modifications else None
 
             print(f"ad_copy_data : {ad_copy_data} | ad_copy_modifications : {ad_copy_modifications} | generated_ad_copy_modifications : {generated_ad_copy_modifications} | ad_copy : {ad_copy}")
 
@@ -118,9 +119,11 @@ class MarketingAgent:
                 results["ad_copy_structure"] = modify_ad_copy_structure(ad_copy_data, ad_copy_modifications)
 
             elif generated_ad_copy_modifications and ad_copy:
-                print(f"ad_copy : {ad_copy} | generated_ad_copy_modifications : {generated_ad_copy_modifications}")
                 results["ad_copy"] = modify_generated_ad_copy(modifications["ad_copy"], generated_ad_copy_modifications)
-                print(f"Result : {results}")
+
+            elif social_media_platform and ad_copy:
+                post_result = post_social_media_content(social_media_platform, ad_copy)
+                results["social_media_post_result"] = post_result
 
             else:
                 results["ad_copy_structure"] = generate_ad_copy_structure(product_name, product_features, description, audience, platform)

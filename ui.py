@@ -294,18 +294,18 @@ if st.session_state.ad_copy_text:
         st.session_state.ad_copy_text = response["ad_copy"]
         st.rerun()
 
-    # # ✅ **Dropdown for Social Media Platform Selection**
-    # social_media_platform = st.selectbox("Select Platform to Post:", ["Twitter", "YouTube", "Email"])
+    # ✅ **Dropdown for Social Media Platform Selection**
+    social_media_platform = st.selectbox("Select Platform to Post:", ["Twitter", "YouTube", "Email"])
 
-    # if st.button("Post Ad Copy to Social Media"):
-    #     print(f"Ad Copy: {st.session_state.ad_copy_text} | Platform: {social_media_platform}")
-    #     response = marketing_agent.run_campaign(
-    #         formatted_prompt,
-    #         actions=["ad_copy"],
-    #         modifications={"ad_copy": st.session_state.ad_copy_text, "social_media_platform": social_media_platform}
-    #     )
-    #     print(f"Response: {response}")
-    #     if "ad_copy_result" in response and response["ad_copy_result"]:
-    #         st.success(f"✅ Successfully posted to {social_media_platform}!")
-    #     else:
-    #         st.error(f"❌ Failed to post to {social_media_platform}.")
+    if st.button("Post Ad Copy to Social Media"):
+        print(f"Ad Copy: {st.session_state.ad_copy_text} | Platform: {social_media_platform}")
+        response = marketing_agent.run_campaign(
+            formatted_prompt,
+            actions=["ad_copy"],
+            modifications={"ad_copy": st.session_state.ad_copy_text, "social_media_platform": social_media_platform}
+        )
+        print(f"Response: {response}")
+        if "ad_copy_result" in response and response["ad_copy_result"]:
+            st.success(f"✅ Successfully posted to {social_media_platform}!")
+        else:
+            st.error(f"❌ Failed to post to {social_media_platform}.")
