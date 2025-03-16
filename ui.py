@@ -75,7 +75,6 @@ if st.button("Generate Campaign"):
             st.session_state.generated_images = response["generated_images"]
         if "monitor_data" in response:
             st.session_state.monitor_data = response["monitor_data"]
-            print(f"st.session_state.monitor_data : {st.session_state.monitor_data}")
 
         
         st.rerun()
@@ -351,7 +350,7 @@ if "monitor_data" in st.session_state:
     st.metric(label="🔄 Lead Conversion Rate", value=monitor_data["lead_conversion_rate"])
     st.metric(label="🗣 Customer Feedback", value=monitor_data["customer_feedback"])
     st.metric(label="⭐ Satisfaction Score", value=monitor_data["satisfaction_score"])
-    st.metric(label="🏆 Competitor Activity", value=monitor_data["competitor_activity"])
+    st.metric(label="🏆 Competitor Activity", value=", ".join(monitor_data["competitor_activity"]))
     st.metric(label="💰 Budget Utilization", value=monitor_data["budget_utilization"])
     st.metric(label="⚙ Operational Efficiency", value=monitor_data["operational_efficiency"])
 
