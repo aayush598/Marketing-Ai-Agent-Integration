@@ -2,12 +2,13 @@ import streamlit as st
 from audience import get_target_audience
 from agents.MarketingAgent import MarketingAgent
 import google.generativeai as genai
-from config.config import GEMINI_API_KEY
+from config.config import GEMINI_API_KEY, SERPAPI_KEY, GROQ_API_KEY
+
 
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize MarketingAgent
-marketing_agent = MarketingAgent(groq_api_key="YOUR_GROQ_API_KEY", serpapi_key="YOUR_SERPAPI_KEY")
+marketing_agent = MarketingAgent(groq_api_key=GROQ_API_KEY, serpapi_key=SERPAPI_KEY)
 
 # Define available actions
 ACTIONS = [
@@ -35,6 +36,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 
 # Define session states
 session_keys = [
+    "scraped_images",
     "ad_copy_structure", "ad_copy_text", "ad_copy_modifications",
     "blog_info", "blog_post_text", "blog_modifications","blog_post_modifications",
     "video_script_info", "video_script_text", "video_script_modifications","generated_video_script_modifications",
@@ -65,6 +67,8 @@ if st.button("Generate Campaign"):
             st.session_state.video_script_info = response["video_script_structure"]
         if "social_media_structure" in response:
             st.session_state.social_media_info = response["social_media_structure"]
+        if "scraped_images" in response:
+            st.session_state.scraped_images = response["scraped_images"]
 
         
         st.rerun()
@@ -309,3 +313,15 @@ if st.session_state.ad_copy_text:
             st.success(f"✅ Successfully posted to {social_media_platform}!")
         else:
             st.error(f"❌ Failed to post to {social_media_platform}.")
+
+# ✅ Display Scraped Images
+if "scraped_images" in selected_actions:
+    st.subheader(f"📸 Scraped Images for {product_name}")
+
+    print(f"Scraped Images: {st.session_state}")
+    if "scraped_images" in st.session_state and st.session_state.scraped_images:
+        for idx, img_url in enumerate(st.session_state.scraped_images):
+            st.image(img_url, caption=f"Scraped Image {idx+1}", use_column_width=True)
+            st.text(f"📂 Saved Path: {img_url}")
+    else:
+        st.warning("No images scraped yet. Try generating again.")

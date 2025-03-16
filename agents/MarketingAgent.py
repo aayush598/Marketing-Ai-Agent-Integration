@@ -34,7 +34,6 @@ class MarketingAgent:
         action_map = {
             "campaign_idea": lambda: generate_campaign(self, product_name, product_features, description, audience, platform),
             "hashtags": lambda: generate_hashtags(self, product_name, product_features, description, audience, platform),
-            "scraped_images": lambda: scrape_images_with_serpapi(self, product_name, product_features, description, audience, platform),
             "generated_images": lambda: generate_images_with_gemini(self, product_name, product_features, description, audience, platform),
         }
 
@@ -127,7 +126,11 @@ class MarketingAgent:
 
             else:
                 results["ad_copy_structure"] = generate_ad_copy_structure(product_name, product_features, description, audience, platform)
-
+        
+        # ✅ Handle Image Scraping and Generation
+        if "scraped_images" in actions:
+            scraped_images = scrape_images_with_serpapi(self, product_name, product_features, description, audience, platform)
+            results["scraped_images"] = scraped_images
 
         # Execute other actions
         for action in actions:
