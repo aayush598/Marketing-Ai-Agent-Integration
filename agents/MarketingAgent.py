@@ -1,13 +1,18 @@
 from agents.generate_campaign import generate_campaign
 from agents.generate_ad_copy import modify_generated_ad_copy, modify_ad_copy_structure, generate_ad_copy_from_structure,generate_ad_copy_structure
 from agents.scrape_images_with_serpapi import scrape_images_with_serpapi
-from agents.generate_images_with_gemini import generate_images_with_gemini
+from agents.generate_images_with_gemini import ImageGenerator
 from agents.generate_blog import generate_blog_structure, modify_blog_structure, generate_blog_from_structure, modify_generated_blog
 from agents.generate_video_script import generate_video_script_from_structure, modify_generated_video_script, generate_video_script_structure, modify_video_script_structure
 from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post, post_social_media_content
 from agents.generate_hashtags import generate_hashtags
 
 import google.generativeai as genai
+
+from config.config import HUGGINGFACE_API , SERPAPI_KEY
+
+gemini_model = genai.GenerativeModel('gemini-2.0-flash-lite')
+image_generator = ImageGenerator(gemini_model, HUGGINGFACE_API, SERPAPI_KEY)
 
 class MarketingAgent:
     def __init__(self, groq_api_key, serpapi_key):
@@ -34,7 +39,6 @@ class MarketingAgent:
         action_map = {
             "campaign_idea": lambda: generate_campaign(self, product_name, product_features, description, audience, platform),
             "hashtags": lambda: generate_hashtags(self, product_name, product_features, description, audience, platform),
-            "generated_images": lambda: generate_images_with_gemini(self, product_name, product_features, description, audience, platform),
         }
 
         # Handle Blog Generation
@@ -132,9 +136,16 @@ class MarketingAgent:
             scraped_images = scrape_images_with_serpapi(self, product_name, product_features, description, audience, platform)
             results["scraped_images"] = scraped_images
 
+        # ✅ Handle Image Generation
+        if "generated_images" in actions:
+            generated_images = image_generator.generate_images(product_name, product_features, description, audience, platform)
+
+            results["generated_images"] = generated_images
+
         # Execute other actions
         for action in actions:
             if action in action_map:
                 results[action] = action_map[action]()
 
         return results
+

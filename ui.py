@@ -36,6 +36,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 
 # Define session states
 session_keys = [
+    "generated_images",
     "scraped_images",
     "ad_copy_structure", "ad_copy_text", "ad_copy_modifications",
     "blog_info", "blog_post_text", "blog_modifications","blog_post_modifications",
@@ -69,6 +70,8 @@ if st.button("Generate Campaign"):
             st.session_state.social_media_info = response["social_media_structure"]
         if "scraped_images" in response:
             st.session_state.scraped_images = response["scraped_images"]
+        if "generated_images" in response:
+            st.session_state.generated_images = response["generated_images"]
 
         
         st.rerun()
@@ -325,3 +328,12 @@ if "scraped_images" in selected_actions:
             st.text(f"📂 Saved Path: {img_url}")
     else:
         st.warning("No images scraped yet. Try generating again.")
+
+# ✅ **Display Generated Images**
+if st.session_state.generated_images:
+    st.subheader("Generated Images")
+    for img_path in st.session_state.generated_images:
+        try:
+            st.image(img_path, caption=f"Generated Image: {img_path}", use_column_width=True)
+        except Exception as e:
+            st.error(f"Error displaying image {img_path}: {e}")
