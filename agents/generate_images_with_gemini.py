@@ -158,8 +158,8 @@ description = "A revolutionary smartphone with advanced security and immersive d
 audience = "Tech enthusiasts aged 18-40"
 platform = "Instagram"
 
-image_paths = image_generator.generate_images(product_name, product_features, description, audience, platform)
+# image_paths = image_generator.generate_images(product_name, product_features, description, audience, platform)
 
-# ✅ Display the generated image paths
-for path in image_paths:
-    print(f"📁 Image saved at: {path}")
+# # ✅ Display the generated image paths
+# for path in image_paths:
+#     print(f"📁 Image saved at: {path}")

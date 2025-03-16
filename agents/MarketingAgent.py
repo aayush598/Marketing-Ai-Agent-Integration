@@ -6,6 +6,7 @@ from agents.generate_blog import generate_blog_structure, modify_blog_structure,
 from agents.generate_video_script import generate_video_script_from_structure, modify_generated_video_script, generate_video_script_structure, modify_video_script_structure
 from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post, post_social_media_content
 from agents.generate_hashtags import generate_hashtags
+from agents.monitor_campaign import monitor_campaign 
 
 import google.generativeai as genai
 
@@ -39,7 +40,13 @@ class MarketingAgent:
         action_map = {
             "campaign_idea": lambda: generate_campaign(self, product_name, product_features, description, audience, platform),
             "hashtags": lambda: generate_hashtags(self, product_name, product_features, description, audience, platform),
+            "monitor": lambda: monitor_campaign(product_name, product_features, description, audience, platform),
         }
+        # print(f"Action : {actions}")
+        # ✅ Handle Monitoring
+        if "monitor" in actions:
+            results["monitor_data"] = monitor_campaign(product_name, product_features, description, audience, platform)
+
 
         # Handle Blog Generation
         if "blog_post" in actions:

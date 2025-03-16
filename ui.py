@@ -20,6 +20,7 @@ ACTIONS = [
     "hashtags",
     "scraped_images",
     "generated_images",
+    "monitor",
 ]
 
 st.title("Marketing Campaign Generator")
@@ -29,7 +30,7 @@ product_name = st.text_input("Product Name:")
 product_features = st.text_area("Product Features (comma-separated):")
 description = st.text_area("Campaign Description:")
 audience = get_target_audience(product_name, product_features, description)
-platform = st.selectbox("Select Platform:", ["Twitter", "LinkedIn", "Instagram", "Facebook", "YouTube", "Other"])
+platform = st.selectbox("Select Platform:", ["Twitter", "LinkedIn", "Instagram", "Facebook", "YouTube", "Gmail", "Other"])
 
 # Multi-select for actions
 selected_actions = st.multiselect("Select Actions:", ACTIONS)
@@ -72,6 +73,9 @@ if st.button("Generate Campaign"):
             st.session_state.scraped_images = response["scraped_images"]
         if "generated_images" in response:
             st.session_state.generated_images = response["generated_images"]
+        if "monitor_data" in response:
+            st.session_state.monitor_data = response["monitor_data"]
+            print(f"st.session_state.monitor_data : {st.session_state.monitor_data}")
 
         
         st.rerun()
@@ -337,3 +341,18 @@ if st.session_state.generated_images:
             st.image(img_path, caption=f"Generated Image: {img_path}", use_column_width=True)
         except Exception as e:
             st.error(f"Error displaying image {img_path}: {e}")
+
+### **🔹 Monitoring Dashboard**
+if "monitor_data" in st.session_state:
+    st.subheader("📊 Campaign Monitoring Report")
+
+    monitor_data = st.session_state.monitor_data
+    st.metric(label="📈 Sales Performance", value=monitor_data["sales_performance"])
+    st.metric(label="🔄 Lead Conversion Rate", value=monitor_data["lead_conversion_rate"])
+    st.metric(label="🗣 Customer Feedback", value=monitor_data["customer_feedback"])
+    st.metric(label="⭐ Satisfaction Score", value=monitor_data["satisfaction_score"])
+    st.metric(label="🏆 Competitor Activity", value=monitor_data["competitor_activity"])
+    st.metric(label="💰 Budget Utilization", value=monitor_data["budget_utilization"])
+    st.metric(label="⚙ Operational Efficiency", value=monitor_data["operational_efficiency"])
+
+    st.success("✅ Monitoring data updated successfully!")
