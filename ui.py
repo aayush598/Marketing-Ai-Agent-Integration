@@ -38,6 +38,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 
 # Define session states
 session_keys = [
+    "strategy_data", "strategy_modifications",
     "generated_images",
     "scraped_images",
     "ad_copy_structure", "ad_copy_text", "ad_copy_modifications",
@@ -360,10 +361,28 @@ if "monitor_data" in st.session_state:
     st.success("✅ Monitoring data updated successfully!")
 
 ### **🔹 Strategy View**
-if "strategy_data" in st.session_state:
+if st.session_state.strategy_data:
     st.subheader("🎯 Marketing Strategy")
 
+    # Display original strategy
     strategy_data = st.session_state.strategy_data
     st.text_area("📌 Strategy Details", strategy_data, height=400)
 
-    st.success("✅ Strategy generated successfully!")
+    # ✅ **Modification Input Field**
+    st.session_state.strategy_modifications = st.text_area(
+        "✏️ Modify Strategy (Optional):", 
+        st.session_state.strategy_modifications
+    )
+
+    # Button to modify the strategy
+    if st.button("Modify Strategy"):
+        if st.session_state.strategy_modifications:
+            response = marketing_agent.run_campaign(
+                formatted_prompt, 
+                actions=["strategy"], 
+                modifications={"strategy_modifications": st.session_state.strategy_modifications}
+            )
+            st.session_state.strategy_data = response["strategy"]
+            st.rerun()
+        else:
+            st.warning("Please enter modifications before clicking modify.")

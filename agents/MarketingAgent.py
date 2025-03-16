@@ -48,9 +48,19 @@ class MarketingAgent:
         if "monitor" in actions:
             results["monitor_data"] = monitor_campaign(product_name, product_features, description, audience, platform)
 
-        # ✅ Handle Strategy Generation
+        # ✅ Handle Strategy Generation & Modification
         if "strategy" in actions:
-            results["strategy"] = generate_strategy(product_name, product_features, description, audience, platform)
+            strategy_data = modifications.get("strategy_data", None) if modifications else None
+            strategy_modifications = modifications.get("strategy_modifications", None) if modifications else None
+
+            if confirm_final and strategy_data:
+                results["strategy"] = generate_strategy(product_name, product_features, description, audience, platform)
+            
+            elif strategy_modifications and strategy_data:
+                results["strategy"] = modify_strategy(strategy_data, strategy_modifications)
+
+            else:
+                results["strategy"] = generate_strategy(product_name, product_features, description, audience, platform)
 
         # Handle Blog Generation
         if "blog_post" in actions:
