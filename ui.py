@@ -28,7 +28,7 @@ st.title("Marketing Campaign Generator")
 product_name = st.text_input("Product Name:")
 product_features = st.text_area("Product Features (comma-separated):")
 description = st.text_area("Campaign Description:")
-audience = get_target_audience()
+audience = get_target_audience(product_name, product_features, description)
 platform = st.selectbox("Select Platform:", ["Twitter", "LinkedIn", "Instagram", "Facebook", "YouTube", "Other"])
 
 # Multi-select for actions
