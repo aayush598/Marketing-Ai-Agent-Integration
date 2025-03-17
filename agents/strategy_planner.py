@@ -5,8 +5,6 @@ gemini_text_model = genai.GenerativeModel('gemini-2.0-flash-lite')
 def generate_strategy(product_name, product_features, description, audience, platform):
     """Generate a comprehensive marketing strategy for a product."""
     
-    print(f"📝 Crafting marketing strategy for {product_name} on {platform}...")
-
     prompt = f"""
     You are a marketing strategist. Create a **detailed marketing strategy** for the following product:
 
@@ -25,6 +23,23 @@ def generate_strategy(product_name, product_features, description, audience, pla
     6️⃣ **Partnerships & Alliances Strategy**: Potential partnerships for business growth.
 
     ⚡ Provide actionable insights and best practices!
+    """
+
+    response = gemini_text_model.generate_content(prompt)
+    return response.text
+
+def modify_strategy(existing_strategy, modifications):
+    """Modify an already generated marketing strategy based on user input."""
+    prompt = f"""
+    Modify the following marketing strategy based on user input:
+
+    🔹 **Original Strategy:**
+    {existing_strategy}
+
+    🔹 **User Modifications:**
+    {modifications}
+
+    **Ensure the modifications enhance clarity, engagement, and execution feasibility while keeping the structure intact.**
     """
 
     response = gemini_text_model.generate_content(prompt)

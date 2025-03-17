@@ -7,7 +7,7 @@ from agents.generate_video_script import generate_video_script_from_structure, m
 from agents.generate_social_media_post import generate_social_media_structure, modify_social_media_structure, generate_social_media_post_from_structure, modify_generated_social_media_post, post_social_media_content
 from agents.generate_hashtags import generate_hashtags
 from agents.monitor_campaign import monitor_campaign 
-from agents.strategy_planner import generate_strategy
+from agents.strategy_planner import generate_strategy,modify_strategy
 
 import google.generativeai as genai
 
