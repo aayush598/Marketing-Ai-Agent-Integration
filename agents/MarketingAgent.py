@@ -8,6 +8,7 @@ from agents.generate_social_media_post import generate_social_media_structure, m
 from agents.generate_hashtags import generate_hashtags
 from agents.monitor_campaign import monitor_campaign 
 from agents.strategy_planner import generate_strategy,modify_strategy
+from agents.planning import generate_planning, modify_planning
 
 import google.generativeai as genai
 
@@ -162,6 +163,17 @@ class MarketingAgent:
             generated_images = image_generator.generate_images(product_name, product_features, description, audience, platform)
 
             results["generated_images"] = generated_images
+
+        # ✅ Handle Planning
+        if "planning" in actions:
+            planning_data = modifications.get("planning_results", None) if modifications else None
+            planning_modifications = modifications.get("planning_modifications", None) if modifications else None
+
+            if planning_modifications and planning_data:
+                results["planning_results"] = modify_planning(planning_data, planning_modifications)
+            else:
+                results["planning_results"] = generate_planning()
+
 
         # Execute other actions
         for action in actions:

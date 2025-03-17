@@ -12,6 +12,7 @@ marketing_agent = MarketingAgent(groq_api_key=GROQ_API_KEY, serpapi_key=SERPAPI_
 
 # Define available actions
 ACTIONS = [
+    "planning",
     "strategy", 
     "campaign_idea",
     "ad_copy",
@@ -38,6 +39,7 @@ selected_actions = st.multiselect("Select Actions:", ACTIONS)
 
 # Define session states
 session_keys = [
+    "planning_results","planning_modifications",
     "strategy_data", "strategy_modifications",
     "generated_images",
     "scraped_images",
@@ -79,6 +81,8 @@ if st.button("Generate Campaign"):
             st.session_state.monitor_data = response["monitor_data"]
         if "strategy" in response:
             st.session_state.strategy_data = response["strategy"]
+        if "planning_results" in response:
+            st.session_state.planning_results = response["planning_results"]
 
         
         st.rerun()
@@ -386,3 +390,19 @@ if st.session_state.strategy_data:
             st.rerun()
         else:
             st.warning("Please enter modifications before clicking modify.")
+
+# ✅ **🔹 Planning Action Output**
+if "planning" in selected_actions and "planning_results" in st.session_state:
+    st.subheader("📝 Planning Overview")
+    st.text_area("Planning Details", st.session_state.planning_results, height=300)
+
+    st.session_state.planning_modifications = st.text_area("Modify Planning:", st.session_state.planning_modifications)
+
+    if st.button("Modify Planning"):
+        response = marketing_agent.run_campaign(
+            formatted_prompt, 
+            actions=["planning"], 
+            modifications={"planning_results": st.session_state.planning_results, "planning_modifications": st.session_state.planning_modifications}
+        )
+        st.session_state.planning_results = response["planning_results"]
+        st.rerun()
