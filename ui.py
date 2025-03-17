@@ -144,25 +144,46 @@ if st.session_state.blog_post_text:
 
 ### **🔹 Video Script Generation**
 if st.session_state.video_script_info:
-    st.subheader("Suggested Video Script Format")
-    st.text_area("Video Script Details", st.session_state.video_script_info, height=300)
+    st.subheader("🎬 **Suggested Video Script Format**")
+    
+    # ✅ Extract Structured Information from the Text Output
+    script_lines = st.session_state.video_script_info.split("\n")
+    formatted_script = ""
+    
+    for line in script_lines:
+        if line.startswith("* **"):  # Bold headers
+            formatted_script += f"\n### {line.strip('* ')}\n"
+        elif line.startswith("*"):  # Bullet points
+            formatted_script += f"- {line.strip('* ')}\n"
+        elif line.startswith("    *"):  # Sub-bullets
+            formatted_script += f"  - {line.strip('* ')}\n"
+        else:
+            formatted_script += f"{line}\n"
 
-    # Input for modifying the video script format before generation
+    # ✅ Display the formatted script
+    st.markdown(formatted_script)
+
+    # ✅ Input for modifying the video script format before full generation
     st.session_state.video_script_modifications = st.text_area(
-        "Modify Video Script Format (Before Generation):", st.session_state.video_script_modifications
+        "📝 Modify Video Script Format (Before Generation):", 
+        st.session_state.video_script_modifications,
+        height=200
     )
 
-    if st.button("Modify Video Script Format"):
+    # ✅ Button to apply modifications
+    if st.button("✏️ Modify Video Script Format"):
         if st.session_state.video_script_modifications:
             response = marketing_agent.run_campaign(
                 formatted_prompt, 
                 actions=["video_script"], 
-                modifications={"video_script_structure": st.session_state.video_script_info, "video_script_modifications": st.session_state.video_script_modifications}
+                modifications={"video_script_structure": st.session_state.video_script_info, 
+                               "video_script_modifications": st.session_state.video_script_modifications}
             )
             st.session_state.video_script_info = response["video_script_structure"]
             st.rerun()
 
-    if st.button("Confirm & Generate Video Script"):
+    # ✅ Button to confirm and generate the final video script
+    if st.button("🎥 Confirm & Generate Video Script"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["video_script"], 
@@ -173,23 +194,42 @@ if st.session_state.video_script_info:
         st.rerun()
 
 if st.session_state.video_script_text:
-    st.subheader("Generated Video Script")
-    st.text_area("Final Video Script", st.session_state.video_script_text, height=400)
+    st.subheader("📜 **Generated Video Script**")
 
-    # ✅ Adding an input field for modifying the generated video script
+    # ✅ Extract Structured Information from the Text Output
+    script_lines = st.session_state.video_script_text.split("\n")
+    formatted_script = ""
+    
+    for line in script_lines:
+        if line.startswith("**Scene"):  # Scene headings
+            formatted_script += f"\n### {line.strip('* ')}\n"
+        elif line.startswith("* **"):  # Bold headers
+            formatted_script += f"\n**{line.strip('* ')}**\n"
+        elif line.startswith("*"):  # Bullet points
+            formatted_script += f"- {line.strip('* ')}\n"
+        elif line.startswith("    *"):  # Sub-bullets
+            formatted_script += f"  - {line.strip('* ')}\n"
+        else:
+            formatted_script += f"{line}\n"
+
+    # ✅ Display the formatted script in collapsible sections
+    with st.expander("📜 **View Full Video Script**", expanded=True):
+        st.markdown(formatted_script)
+
+    # ✅ Input for modifying the generated video script
     st.session_state.generated_video_script_modifications = st.text_area(
-        "Modify Video Script (Optional):", 
-        st.session_state.generated_video_script_modifications
+        "🛠 Modify Video Script (Optional):", 
+        st.session_state.generated_video_script_modifications,
+        height=200
     )
 
-    if st.button("Modify Video Script"):
+    # ✅ Button to modify final video script
+    if st.button("🔄 Modify Final Video Script"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["video_script"], 
-            modifications={
-                "video_script": st.session_state.video_script_text, 
-                "generated_video_script_modifications": st.session_state.generated_video_script_modifications
-            }
+            modifications={"video_script": st.session_state.video_script_text, 
+                           "generated_video_script_modifications": st.session_state.generated_video_script_modifications}
         )
         st.session_state.video_script_text = response["video_script"]
         st.rerun()
