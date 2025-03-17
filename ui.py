@@ -61,7 +61,7 @@ else:
     formatted_prompt = None  # Ensures it's not used before input validation
 
 # Button to start the campaign
-if st.button("Generate Campaign"):
+if st.button("Submit"):
     if formatted_prompt:
         response = marketing_agent.run_campaign(formatted_prompt, actions=selected_actions)
         print(f"Response : {response}")
