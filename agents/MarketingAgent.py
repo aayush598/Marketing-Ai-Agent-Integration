@@ -172,7 +172,7 @@ class MarketingAgent:
             if planning_modifications and planning_data:
                 results["planning_results"] = modify_planning(planning_data, planning_modifications)
             else:
-                results["planning_results"] = generate_planning()
+                results["planning_results"] = generate_planning(product_name, product_features, description, audience, platform)
 
 
         # Execute other actions

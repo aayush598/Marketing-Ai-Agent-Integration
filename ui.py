@@ -3,6 +3,7 @@ from audience import get_target_audience
 from agents.MarketingAgent import MarketingAgent
 import google.generativeai as genai
 from config.config import GEMINI_API_KEY, SERPAPI_KEY, GROQ_API_KEY
+import json
 
 
 genai.configure(api_key=GEMINI_API_KEY)
@@ -392,17 +393,16 @@ if st.session_state.strategy_data:
             st.warning("Please enter modifications before clicking modify.")
 
 # ✅ **🔹 Planning Action Output**
+# ✅ **🔹 Planning Action Output**
 if "planning" in selected_actions and "planning_results" in st.session_state:
-    st.subheader("📝 Planning Overview")
-    st.text_area("Planning Details", st.session_state.planning_results, height=300)
+    st.subheader("📝 Marketing Planning Overview")
 
-    st.session_state.planning_modifications = st.text_area("Modify Planning:", st.session_state.planning_modifications)
+    # Convert the JSON string into a dictionary
+    planning_data = json.loads(st.session_state.planning_results)
 
-    if st.button("Modify Planning"):
-        response = marketing_agent.run_campaign(
-            formatted_prompt, 
-            actions=["planning"], 
-            modifications={"planning_results": st.session_state.planning_results, "planning_modifications": st.session_state.planning_modifications}
-        )
-        st.session_state.planning_results = response["planning_results"]
-        st.rerun()
+    for section, content in planning_data.items():
+        with st.expander(f"📌 {section.replace('_', ' ').title()}"):
+            st.markdown(content, unsafe_allow_html=True)
+
+    # ✅ **Modification Section**
+    st.session_state.planning_modifications = st.text_area("✏️ Modify Planning Details:", st.session_state.planning_modifications)

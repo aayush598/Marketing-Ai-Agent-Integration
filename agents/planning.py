@@ -25,12 +25,17 @@ def list_groq_models(api_key=GROQ_API_KEY):
         return []
 
 # ✅ Function to create prompt for planning content generation
-def create_prompt(aspect):
+def create_prompt(aspect, product_name, product_features, description, audience, platform):
     """
     Creates a detailed prompt for the given planning aspect.
 
     Args:
         aspect (str): The planning aspect to create a prompt for.
+        product_name (str): The product name.
+        product_features (list): The product's features.
+        description (str): The campaign description.
+        audience (str): The target audience.
+        platform (str): The marketing platform.
 
     Returns:
         str: A detailed prompt.
@@ -38,15 +43,25 @@ def create_prompt(aspect):
     aspect_name = aspect.replace('_', ' ')
     
     prompt = f"""
-    Create a comprehensive {aspect_name} plan for a marketing campaign.
-    Provide actionable steps, best practices, and key considerations.
-    Use markdown formatting for headings and bullet points.
+    Create a comprehensive {aspect_name} plan for the following product marketing campaign:
+
+    🔹 **Product**: {product_name}
+    🔹 **Key Features**: {', '.join(product_features)}
+    🔹 **Description**: {description}
+    🔹 **Target Audience**: {audience}
+    🔹 **Marketing Platform**: {platform}
+
+    🎯 **Guidelines:**
+    - Provide clear **strategies and steps** to optimize {aspect_name}.
+    - Highlight **best practices and potential challenges**.
+    - Suggest **tactics specific to {platform}** for reaching {audience}.
+    - Structure the output using **markdown headings, bullet points, and action steps**.
     """
-    
+
     return prompt
 
 # ✅ Function to generate planning details using Groq API
-def generate_planning():
+def generate_planning(product_name, product_features, description, audience, platform):
     """
     Generates a complete planning document covering all aspects.
     """
@@ -54,7 +69,7 @@ def generate_planning():
     planning_content = {}
 
     for _, aspect in plan_aspects.items():
-        prompt = create_prompt(aspect)
+        prompt = create_prompt(aspect,product_name, product_features, description, audience, platform,)
         _, content = generate_with_groq(prompt, GROQ_API_KEY)  # Replace with actual API key
         planning_content[aspect] = content
 
