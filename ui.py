@@ -4,7 +4,7 @@ from agents.MarketingAgent import MarketingAgent
 import google.generativeai as genai
 from config.config import GEMINI_API_KEY, SERPAPI_KEY, GROQ_API_KEY
 import json
-
+import re
 
 genai.configure(api_key=GEMINI_API_KEY)
 
@@ -92,14 +92,50 @@ if st.button("Submit"):
 
 ### **🔹 Blog Post Generation**
 if st.session_state.blog_info:
-    st.subheader("Suggested Blog Info")
-    st.text_area("Blog Details", st.session_state.blog_info, height=300)
+    st.subheader("📑 Suggested Blog Outline")
 
+    # ✅ Extracting data from text
+    blog_info = st.session_state.blog_info
+
+    # ✅ Extract suitable tone
+    tone_section = blog_info.split("**Suitable Tone:**")[1].split("*")[0].strip()
+
+    # ✅ Extract SEO techniques
+    seo_section = blog_info.split("**SEO Optimization Techniques:**")[1].split("*")
+    seo_techniques = [line.strip() for line in seo_section if line.strip()]
+
+    # ✅ Extract content length
+    content_length = blog_info.split("**Recommended Content Length:**")[1].split("*")[0].strip()
+
+    # ✅ Extract content headings
+    headings_section = blog_info.split("**Content Headings:**")[1].split("*")
+    content_headings = [line.strip() for line in headings_section if line.strip()]
+
+    # ✅ Display output in Streamlit markdown
+    st.markdown(f"""
+    ### ✍️ Suitable Tone  
+    **{tone_section}**
+
+    ### 🔍 SEO Optimization Techniques
+    """)
+    for item in seo_techniques:
+        st.markdown(f"- {item}")
+
+    st.markdown(f"""
+    ### 📝 Recommended Content Length  
+    **{content_length}**
+
+    ### 📌 Content Headings  
+    """)
+    for index, heading in enumerate(content_headings, start=1):
+        st.markdown(f"**{index}.** {heading}")
+
+    # ✅ Allow modification
     st.session_state.blog_modifications = st.text_area(
-        "Modify Blog Info (Before Generation):", st.session_state.blog_modifications
+        "✏️ Modify Blog Info (Before Generation):", st.session_state.blog_modifications
     )
 
-    if st.button("Modify Blog Info"):
+    if st.button("✍️ Modify Blog Info"):
         if st.session_state.blog_modifications:
             response = marketing_agent.run_campaign(
                 formatted_prompt, 
@@ -109,7 +145,7 @@ if st.session_state.blog_info:
             st.session_state.blog_info = response["blog_structure"]
             st.rerun()
 
-    if st.button("Confirm & Generate Blog"):
+    if st.button("✅ Confirm & Generate Blog"):
         response = marketing_agent.run_campaign(
             formatted_prompt, 
             actions=["blog_post"], 
@@ -119,9 +155,33 @@ if st.session_state.blog_info:
         st.session_state.blog_post_text = response["blog_post"]
         st.rerun()
 
+    # ✅ Download as a text file
+    st.download_button(
+        label="📥 Download Blog Outline",
+        data=st.session_state.blog_info,
+        file_name="blog_outline.txt",
+        mime="text/plain"
+    )
+
 if st.session_state.blog_post_text:
     st.subheader("Generated Blog Post")
-    st.text_area("Blog Content", st.session_state.blog_post_text, height=400)
+
+    # ✅ Extract only the <body> content from generated HTML
+    blog_content = st.session_state.blog_post_text
+    body_match = re.search(r"<body.*?>(.*?)</body>", blog_content, re.DOTALL)
+
+    if body_match:
+        blog_content = body_match.group(1)  # Extract inner body content
+
+    # ✅ Render the extracted HTML content properly
+    st.markdown(blog_content, unsafe_allow_html=True)
+
+    st.download_button(
+        label="📥 Download Blog as HTML",
+        data=st.session_state.blog_post_text,
+        file_name="generated_blog.html",
+        mime="text/html"
+    )
 
     # ✅ Adding an input field for modifying the generated blog
     st.session_state.blog_post_modifications = st.text_area(
