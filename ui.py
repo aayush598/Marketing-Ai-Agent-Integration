@@ -61,12 +61,11 @@ if submit_button and actions:
     print(f"Response :{response}")
     # ✅ Store responses in Streamlit session state dynamically
     if "blog_structure" in response:
-        print(f"Blog post received")
         st.session_state.blog_info = response["blog_structure"]
     if "social_media_structure" in response:
         st.session_state.social_media_info = response["social_media_structure"]
-    if "ad_copy" in response:
-        st.session_state.ad_copy_info = response["ad_copy"]
+    if "ad_copy_structure" in response:
+        st.session_state.ad_copy_info = response["ad_copy_structure"]
     if "scraped_images" in response:
         st.session_state.scraped_images = response["scraped_images"]
     if "generated_images" in response:
@@ -75,8 +74,8 @@ if submit_button and actions:
         st.session_state.monitor_info = response["monitor"]
     if "strategy" in response:
         st.session_state.strategy_info = response["strategy"]
-    if "planning" in response:
-        st.session_state.planning_info = response["planning"]
+    if "planning_results" in response:
+        st.session_state.planning_info = response["planning_results"]
 
 # ✅ Retrieve formatted prompt from session (Avoid NameError)
 formatted_prompt = st.session_state.get("formatted_prompt", None)
