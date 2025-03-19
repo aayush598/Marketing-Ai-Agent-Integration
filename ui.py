@@ -63,8 +63,8 @@ if submit_button and actions:
     if "blog_structure" in response:
         print(f"Blog post received")
         st.session_state.blog_info = response["blog_structure"]
-    if "social_media_post" in response:
-        st.session_state.social_media_info = response["social_media_post"]
+    if "social_media_structure" in response:
+        st.session_state.social_media_info = response["social_media_structure"]
     if "ad_copy" in response:
         st.session_state.ad_copy_info = response["ad_copy"]
     if "scraped_images" in response:

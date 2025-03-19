@@ -1,5 +1,7 @@
 import google.generativeai as genai
 from social_media.social_media_manager import SocialMediaManager
+from config.config import GEMINI_API_KEY
+genai.configure(api_key=GEMINI_API_KEY)
 
 gemini_text_model = genai.GenerativeModel('gemini-2.0-flash-lite')
 social_media_manager = SocialMediaManager()
