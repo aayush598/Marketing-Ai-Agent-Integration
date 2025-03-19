@@ -6,8 +6,8 @@ def generate_blog_structure(product_name, product_features, description, audienc
     """Generate structured details for a blog post."""
     prompt = f"""
     Provide only the following structured details for a blog post:
-    - Suitable Tone
-    - SEO Optimization Techniques
+    - Suitable Tone (Informative, Persuasive, Conversational, Professional etc)
+    - SEO Optimization Techniques (Meta title, description, keyword density, internal linking etc)
     - Recommended Content Length
     - Content Headings (For example Intro, Problem, Solution, Features, Benefits, Conclusion, CTA)
     - Keep headings max 3-4 words
@@ -40,26 +40,49 @@ def modify_blog_structure(existing_structure, modifications):
     return response.text
 
 def generate_blog_from_structure(blog_structure):
-    """Generate a complete blog post based on structured details with SEO-optimized HTML format."""
+    """Generate a fully SEO-optimized and HTML-formatted blog post."""
     prompt = f"""
-    Generate a detailed and SEO-optimized blog post in proper HTML format based on the following structured details:
+    Generate a **high-quality, SEO-optimized, and conversion-focused blog post** in valid **HTML format** based on the structured details below.
 
+    **📌 Blog Structure**:
     {blog_structure}
 
-    **SEO Guidelines**:
-    - Include an <title> tag for the blog.
-    - Provide a <meta name="description" content="..."> tag with a concise and compelling description.
-    - Use <h1> for the main title, <h2> for sections, and <h3> for sub-sections.
-    - Ensure keyword placement is natural throughout the content.
-    - Add an <img> tag with an "alt" attribute for image descriptions.
+    **🔍 SEO & Readability Optimization**:
+    - Ensure the blog **ranks well on search engines** and follows SEO best practices.
+    - Use an **engaging and concise** `<title>` tag with the primary keyword.
+    - Include a `<meta name="description">` tag with a **compelling summary (max 160 characters)**.
+    - Ensure **primary and secondary keywords** are used naturally throughout the text.
+    - Use **short and scannable paragraphs** for mobile-friendly readability.
 
-    **Blog Formatting Requirements**:
-    - Start with a strong headline inside <h1>.
-    - Use <h2> for major sections and <h3> for subtopics.
-    - Keep paragraphs short and easy to read with <p>.
-    - Include an unordered list <ul> when listing benefits.
-    - Add a call-to-action inside <div class='cta'> at the end.
-    - Ensure HTML is properly formatted and clean.
+    **🛠 HTML Formatting Requirements**:
+    - **Use `<h1>` for the main blog title**.
+    - **Use `<h2>` for key sections** and `<h3>` for subtopics to maintain structure.
+    - Ensure **proper `<p>` tags** for paragraphs and **bold important phrases** using `<strong>`.
+    - **Use `<ul>` and `<ol>`** for lists and step-by-step guides to enhance readability.
+    - Add `<img>` tags with **alt text** to improve accessibility and SEO.
+    - Include an **internal linking strategy**, suggesting where to add links to relevant pages.
+
+    **💡 User Engagement Strategies**:
+    - Open with a **powerful hook** that captures reader attention.
+    - Use **compelling storytelling** and real-world scenarios when applicable.
+    - Include a **strong call-to-action (CTA)** inside a `<div class='cta'>` block at the end.
+    - Highlight key takeaways in **bold** or **bullet points**.
+
+    **🎯 Example CTA Format**:
+    ```html
+    <div class='cta'>
+        <p><strong>🚀 Ready to take action?</strong></p>
+        <a href="https://example.com/product" target="_blank" class="cta-button">Get Started Today!</a>
+    </div>
+    ```
+
+    **📢 Additional Guidelines**:
+    - Make the content **persuasive and action-driven** to encourage engagement.
+    - Ensure the HTML **is valid, clean, and properly formatted**.
+    - Maintain a **conversational, informative, or persuasive tone** based on the topic.
+
+    **✅ Final Output**:
+    Return the **fully structured and SEO-optimized HTML blog post** that is **ready for publishing**.
     """
     response = gemini_text_model.generate_content(prompt)
     return response.text
@@ -73,15 +96,42 @@ def modify_generated_blog(blog_content, modifications):
 
     **User Modifications**: {modifications}
 
-    **Guidelines**:
-    - Maintain the HTML structure, ensuring correct <h1>, <h2>, <h3>, <p>, and <ul> usage.
-    - Improve clarity, engagement, and SEO optimization.
-    - Preserve image placeholders with alt text.
-    - Keep metadata such as <title> and <meta description>.
-    - Ensure it remains mobile-friendly and easy to read.
+    **🔍 SEO & Readability Optimization**:
+    - Ensure the blog **ranks well on search engines** and follows SEO best practices.
+    - Use an **engaging and concise** `<title>` tag with the primary keyword.
+    - Include a `<meta name="description">` tag with a **compelling summary (max 160 characters)**.
+    - Ensure **primary and secondary keywords** are used naturally throughout the text.
+    - Use **short and scannable paragraphs** for mobile-friendly readability.
 
-    **Final Output**:
-    - Return a well-structured and SEO-optimized HTML blog post.
+    **🛠 HTML Formatting Requirements**:
+    - **Use `<h1>` for the main blog title**.
+    - **Use `<h2>` for key sections** and `<h3>` for subtopics to maintain structure.
+    - Ensure **proper `<p>` tags** for paragraphs and **bold important phrases** using `<strong>`.
+    - **Use `<ul>` and `<ol>`** for lists and step-by-step guides to enhance readability.
+    - Add `<img>` tags with **alt text** to improve accessibility and SEO.
+    - Include an **internal linking strategy**, suggesting where to add links to relevant pages.
+
+    **💡 User Engagement Strategies**:
+    - Open with a **powerful hook** that captures reader attention.
+    - Use **compelling storytelling** and real-world scenarios when applicable.
+    - Include a **strong call-to-action (CTA)** inside a `<div class='cta'>` block at the end.
+    - Highlight key takeaways in **bold** or **bullet points**.
+
+    **🎯 Example CTA Format**:
+    ```html
+    <div class='cta'>
+        <p><strong>🚀 Ready to take action?</strong></p>
+        <a href="https://example.com/product" target="_blank" class="cta-button">Get Started Today!</a>
+    </div>
+    ```
+
+    **📢 Additional Guidelines**:
+    - Make the content **persuasive and action-driven** to encourage engagement.
+    - Ensure the HTML **is valid, clean, and properly formatted**.
+    - Maintain a **conversational, informative, or persuasive tone** based on the topic.
+
+    **✅ Final Output**:
+    Return the **fully structured and SEO-optimized HTML blog post** that is **ready for publishing**.
     """
     response = gemini_text_model.generate_content(prompt)
     return response.text
