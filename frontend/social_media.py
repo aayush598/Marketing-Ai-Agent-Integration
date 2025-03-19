@@ -32,3 +32,25 @@ def display_social_media_section(marketing_agent, formatted_prompt):
     if st.session_state.get("social_media_post_text"):
         st.subheader("Generated Social Media Post")
         st.markdown(st.session_state.social_media_post_text, unsafe_allow_html=True)
+        # ✅ **Dropdown for Social Media Platform Selection**
+        social_media_platform = st.selectbox("Select Platform to Post:", ["Twitter", "YouTube", "Email"])
+
+        # ✅ Button to post to selected social media platform
+        if st.button("🚀 Post to Social Media"):
+            print(f"Posting social media content to {social_media_platform}...")
+
+            response = marketing_agent.run_campaign(
+                formatted_prompt, 
+                actions=["social_media_post"], 
+                modifications={
+                    "social_media_post": st.session_state.social_media_post_text, 
+                    "social_media_platform": social_media_platform
+                }
+            )
+
+            # ✅ Handle response and show success or failure message
+            if "social_media_post_result" in response and response["social_media_post_result"]:
+                st.success(f"✅ Successfully posted to {social_media_platform}!")
+            else:
+                st.error(f"❌ Failed to post to {social_media_platform}.")
+
