@@ -15,7 +15,7 @@ session_keys = [
     "strategy_data", "strategy_modifications",
     "generated_images",
     "scraped_images",
-    "ad_copy_structure", "ad_copy_text", "ad_copy_modifications",
+    "ad_copy_structure", "ad_copy_text", "ad_copy_modifications","generated_ad_copy_modifications",
     "blog_info", "blog_post_text", "blog_modifications","blog_post_modifications",
     "video_script_info", "video_script_text", "video_script_modifications","generated_video_script_modifications",
     "social_media_info", "social_media_post_text", "social_media_modifications","generated_social_media_post_modifications"
