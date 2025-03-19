@@ -43,5 +43,15 @@ def display_blog_section():
 
         if "blog_post_text" in st.session_state and st.session_state["blog_post_text"]:
             st.subheader("📖 Generated Blog Post")
-            # st.markdown(st.session_state["blog_post_text"], unsafe_allow_html=True)
             st.components.v1.html(st.session_state.blog_post_text, height=800, scrolling=True)
+
+            # ✅ Provide Download Option for HTML File
+            blog_html = st.session_state["blog_post_text"]
+            blog_file_name = "generated_blog.html"
+            
+            st.download_button(
+                label="📥 Download Blog as HTML",
+                data=blog_html,
+                file_name=blog_file_name,
+                mime="text/html"
+            )
