@@ -367,6 +367,93 @@ The **Marketing AI Agent** interacts with **Generative AI APIs**:
 
 ---
 
+## **🚀 Instructions to Deploy on Render**
+
+Render is a powerful **cloud platform** for deploying web applications. Follow these steps to deploy this **Marketing AI Agent Integration** project on **Render**.
+
+---
+
+### **🔗 Step 1: Connect GitHub Repository**
+
+1. **Go to [Render](https://dashboard.render.com/)** and sign up (or log in).
+2. Click on **“New Web Service”**.
+3. Select **“Connect a Repository”** and authorize GitHub access.
+4. Select the **GitHub repository** (`Marketing-Ai-Agent-Integration`).
+5. Click **“Connect”**.
+
+---
+
+### **⚙️ Step 2: Configure Deployment**
+
+1. **Select Environment:** **Python**
+2. **Runtime Environment:** Set to **Python 3.9+**
+3. **Build Command:**
+   ```
+   pip install -r requirements.txt
+   ```
+4. **Start Command:**
+   ```
+   python main.py
+   ```
+5. **Instance Type:** Choose **Free or Starter Plan**
+6. **Click on “Create Web Service”** to deploy.
+
+---
+
+### **🔑 Step 3: Set Up Environment Variables**
+
+Since this project requires **API keys**, you need to **upload the `.env` file** for security.
+
+1. Go to **Render Dashboard** → Select the **deployed service**.
+2. Navigate to the **"Environment"** tab.
+3. Click **"Add Environment Variables"**.
+4. Add the following **key-value pairs** from your `.env` file:
+
+   ```
+   GEMINI_API_KEY=your_gemini_api_key
+   GROQ_API_KEY=your_groq_api_key
+   SERPAPI_KEY=your_serpapi_key
+   HUGGINGFACE_API_KEY=your_huggingface_api_key
+   GMAIL_APP_PASSWORD=your_gmail_16_digit_app_password
+   TWITTER_API_KEY=your_twitter_api_key
+   YOUTUBE_API_CREDENTIALS_PATH=/path/to/client_secret.json
+   ```
+
+5. **Alternatively**, upload the **`.env` file** directly:
+   - Go to the **Environment tab**.
+   - Click **“Upload Environment File”**.
+   - Select `.env` from your local machine.
+
+---
+
+### **🚀 Step 4: Deploy and Run**
+
+1. Click **"Manual Deploy"** or **wait for automatic deployment**.
+2. Once the deployment is complete, click on the **Live URL**.
+3. Your **AI-powered marketing campaign generator** is now live! 🎉
+
+---
+
+### **🔄 Step 5: Enable Auto Deploy (Optional)**
+
+1. Go to the **Settings tab** in Render Dashboard.
+2. Enable **Auto Deploy** to automatically deploy the latest changes from GitHub.
+3. Every time you push changes to the **GitHub repository**, Render will redeploy the app.
+
+---
+
+### **✅ Additional Notes**
+
+- If using **Google APIs** (Gmail, YouTube), ensure you **upload the `client_secret.json` file** to **Render’s persistent storage** or reference it correctly in the environment variables.
+- Check **Logs** in Render Dashboard for debugging if deployment fails.
+- If using **a custom domain**, go to **Settings > Custom Domains** to configure it.
+
+---
+
+### **🎯 Your App is Now Live on Render!**
+
+🚀 Enjoy running **Marketing AI Agent Integration** in the cloud! 🌍🎉
+
 ## **👨‍💻 Contribution Guidelines**
 
 Want to improve this project? **Contributions are welcome!** 🎉
