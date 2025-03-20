@@ -1,27 +1,25 @@
-import requests
-import json
+import os
 
-# Define the API endpoint
-API_URL = "http://127.0.0.1:5000/generate_campaign"
+def get_folder_tree(folder_path, indent=""):
+    try:
+        items = sorted(os.listdir(folder_path))
+    except PermissionError:
+        print(f"{indent}[Permission Denied] {folder_path}")
+        return
+    
+    items = [item for item in items if (item != "venv" or item !=".git")]
+    
+    for i, item in enumerate(items):
+        item_path = os.path.join(folder_path, item)
+        is_last = (i == len(items) - 1)
+        connector = "└──" if is_last else "├──"
+        print(f"{indent}{connector} {item}")
+        
+        if os.path.isdir(item_path):
+            new_indent = indent + ("    " if is_last else "│   ")
+            get_folder_tree(item_path, new_indent)
 
-# Define the request payload with dummy values
-payload = {
-    "prompt": [
-        "SmartFit Watch",
-        ["Heart Rate Monitoring", "Step Tracking", "Sleep Analysis", "Bluetooth Connectivity"],
-        "A next-gen smartwatch designed for fitness enthusiasts, offering advanced health tracking and seamless smartphone integration.",
-        "Fitness enthusiasts, athletes, health-conscious individuals",
-        "youtube"
-    ],
-    "actions": ["social_media_post"]
-}
-
-# Send the POST request
-response = requests.post(API_URL, json=payload)
-
-# Print the response
-if response.status_code == 200:
-    print("Success! Here’s the response:")
-    print(json.dumps(response.json(), indent=4))
-else:
-    print(f"Error {response.status_code}: {response.text}")
+if __name__ == "__main__":
+    folder_path = input("Enter the folder path: ").strip()
+    print(folder_path)
+    get_folder_tree(folder_path)
